@@ -7,6 +7,9 @@ import websocket # websocket connections
 import re # regex
 import json # json
 
+from settings import credentials
+
+
 def on_message(ws, message):
 	process_message(ws, message)
 
@@ -20,31 +23,24 @@ def on_error(ws, error):
 def process_message(ws, message):
 	messageDecoded = json.loads(message)
 	chatPost = messageDecoded['message']
-	# ~ position = messageDecoded['delay']
-	# ~ print('position set to', position)
+	position = messageDecoded['id']
 	print('received ', repr(chatPost))
 	if re.match('!fbot', chatPost):
-		send(ws)
+		send(ws, position)
 
-def send(ws):
+def send(ws, position):
 	message = {
 		'channel' : 'fbot',
 		'name' : 'fbot',
 		'message' : 'heureka',
-		# ~ 'delay' : position + 1,
+		'delay' : position + 1,
 		'publicid' : '1',
 		'bottag' : '1'
 	}
-	print('sending', json.dumps(message))
 	ws.send(json.dumps(message))
 
-def mainloop () :
-	position = 0
-	credentials = {
-		'username' : '',
-		'password' : '',
-		'version' : '20171030131648'
-	}
+
+def mainloop() :
 	authRequest = requests.post('https://chat.qed-verein.de/rubychat/account', data=credentials)
 
 	ws = websocket.WebSocketApp('wss://chat.qed-verein.de/websocket?channel=fbot&position=-0&version=2',
