@@ -18,7 +18,6 @@ def on_error(ws, error):
 
 
 def process_message(ws, message):
-	print(message)
 	messageDecoded = json.loads(message)
 	chatPost = messageDecoded['message']
 	# ~ position = messageDecoded['delay']
@@ -34,9 +33,9 @@ def send(ws):
 		'message' : 'heureka',
 		# ~ 'delay' : position + 1,
 		'publicid' : '1',
-		'bottag' : 1
+		'bottag' : '1'
 	}
-	print('sending', message)
+	print('sending', json.dumps(message))
 	ws.send(json.dumps(message))
 
 def mainloop () :
