@@ -23,13 +23,14 @@ def on_error(ws, error):
 def process_message(ws, message):
 	messageDecoded = json.loads(message)
 	chatPost = messageDecoded['message']
-	position = messageDecoded['id']
-	print('parsing', repr(chatPost))
+	if messageDecoded['bottag'] in ['1', 1]:
+		return
 	args = [x.strip(' \t\n') for x in chatPost.split(' ')]
-	for x in botpackage.__all__:
-		answer = x.processMessage(args)
+	print('processing', args)
+	for bot in botpackage.__all__:
+		answer = bot.processMessage(args)
 		if answer is not None:
-			send(ws, answer['name'], answer['message'], position)
+			send(ws, answer['name'], answer['message'], messageDecoded['id'])
 
 def send(ws, name, chatPost, position):
 	message = {
@@ -38,7 +39,7 @@ def send(ws, name, chatPost, position):
 		'message' : chatPost,
 		'delay' : position + 1,
 		'publicid' : '1',
-		'bottag' : '1'
+		'bottag' : 1
 	}
 	ws.send(json.dumps(message))
 
@@ -61,8 +62,9 @@ def mainloop():
 
 if __name__ == '__main__':
 	try:
+		# ~ print(botpackage.nickname.processMessage(['!nickname', 'f', '-r', 'kk12']))
 		mainloop()
 	except KeyboardInterrupt:
 		pass
-	except Exception as e:
-		print(e)
+	except Exception:
+		raise
