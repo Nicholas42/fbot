@@ -10,6 +10,7 @@ import json # json
 from settings import credentials
 import botpackage
 
+channel = ''
 def on_message(ws, message):
 	process_message(ws, message)
 
@@ -47,7 +48,7 @@ def send(ws, name, chatPost, position):
 def create_ws():
 	authRequest = requests.post('https://chat.qed-verein.de/rubychat/account', data=credentials)
 
-	ws = websocket.WebSocketApp('wss://chat.qed-verein.de/websocket?channel=fbot&position=-0&version=2',
+	ws = websocket.WebSocketApp('wss://chat.qed-verein.de/websocket?channel=' + channel + '&position=-0&version=2',
 			cookie = "userid=440; pwhash=" + authRequest.cookies['pwhash'],
 			on_message = on_message,
 			on_error = on_error,
@@ -62,8 +63,14 @@ def mainloop():
 
 if __name__ == '__main__':
 	try:
-		# ~ print(botpackage.nickname.processMessage(['!nickname', 'f', '-r', 'kk12']))
-		mainloop()
+		# ~ print(botpackage.nickname.processMessage(['!nickname', 'franz'], 'Franz'))
+		# ~ exit(0)
+		while True:
+			inp = input('')
+			for x in botpackage.__all__:
+				print(x.processMessage(inp.split(' ')[1:], inp.split(' ')[0]))
+			print()
+		# ~ mainloop()
 	except KeyboardInterrupt:
 		pass
 	except Exception:

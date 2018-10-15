@@ -4,7 +4,9 @@ _help = 'usage: !nickname <nickname> [[-a|-r] <nickname>]'
 _botname = 'nicknamebot'
 
 
-def processMessage(args):
+def processMessage(args, name):
+	if len(args) == 0:
+		return
 	if args[0] not in ['!nickname', '!nicknames']:
 		return
 
@@ -33,20 +35,25 @@ def processMessage(args):
 
 	# print nicknames
 	if len(args) == 2:
+		message = ''
 		nicknames = []
 		for nickname in cursor.execute(
 					'SELECT nickname '
 					'FROM nicknames '
-					'WHERE userid == ?'
+					'WHERE userid == ? '
 					'AND deletable == 0'
 					';', (userid, )
 				):
 			nicknames.append(nickname[0])
 
-		if len(nicknames) > 1:
-			message = username + ' hat die Nicknames:\n'
-			for nickname in nicknames:
-				message += nickname + '\n'
+		if len(nicknames) < 1:
+			return
+
+		message = username + ' hat die Nicknames:\n'
+		for nickname in nicknames:
+			message += nickname + '\n'
+		# ~ return {'name' : _botname, 'message' : message}
+
 	# add, remove nicknames
 	elif len(args) == 4:
 		if args[2] == '-a': # add nickname
