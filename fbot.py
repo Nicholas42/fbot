@@ -4,7 +4,6 @@ import requests # http requests
 import websocket # websocket connections
 
 # system libraries
-# ~ import re # regex
 import json # json
 
 from settings import credentials
@@ -29,7 +28,7 @@ def process_message(ws, message):
 	args = [x.strip(' \t\n') for x in chatPost.split(' ')]
 	print('processing', args)
 	for bot in botpackage.__all__:
-		answer = bot.processMessage(args)
+		answer = bot.processMessage(args, messageDecoded)
 		if answer is not None:
 			send(ws, answer['name'], answer['message'], messageDecoded['id'])
 
@@ -68,7 +67,7 @@ if __name__ == '__main__':
 		while True:
 			inp = input('')
 			for x in botpackage.__all__:
-				print(x.processMessage(inp.split(' ')[1:], inp.split(' ')[0]))
+				print(x.processMessage(inp.split(' ')[1:], {'name': inp.split(' ')[0], 'message': ''.join(inp.split(' ')[1:])}))
 			print()
 		# ~ mainloop()
 	except KeyboardInterrupt:

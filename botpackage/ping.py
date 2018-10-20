@@ -1,12 +1,12 @@
 import sqlite3
 
-def processMessage(args, name):
+def processMessage(args, rawMessage):
 	db_connection = sqlite3.connect('fbotdb.sqlite')
 	cursor = db_connection.cursor()
 
 	message = None
 
-	recipientNicks = [name]
+	recipientNicks = [rawMessage['name']]
 	for nick in cursor.execute(
 				'SELECT nickname '
 				'FROM nicknames '
@@ -15,7 +15,7 @@ def processMessage(args, name):
 					'FROM nicknames '
 					'WHERE lower(nickname) == ? '
 					'ORDER BY deletable DESC'
-				');', (name.lower(),)
+				');', (rawMessage['name'].lower(),)
 		):
 		if nick[0] not in recipientNicks:
 			recipientNicks.append(nick[0])

@@ -4,7 +4,7 @@ _help = 'usage: !nickname <nickname> [[-a|-r] <nickname>]'
 _botname = 'nicknamebot'
 
 
-def processMessage(args, name):
+def processMessage(args, rawMessage):
 	if len(args) == 0:
 		return
 	if args[0] not in ['!nickname', '!nicknames']:
