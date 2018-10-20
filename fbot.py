@@ -9,9 +9,7 @@ import json # json
 from settings import credentials
 import botpackage
 
-channel = ''
-def on_message(ws, message):
-	process_message(ws, message)
+channel = 'fbot'
 
 def on_close(ws):
 	print('ws closed')
@@ -20,7 +18,7 @@ def on_error(ws, error):
 	print('ws error: ' + error)
 
 
-def process_message(ws, message):
+def on_message(ws, message):
 	messageDecoded = json.loads(message)
 	chatPost = messageDecoded['message']
 	if messageDecoded['bottag'] in ['1', 1]:
@@ -62,14 +60,12 @@ def mainloop():
 
 if __name__ == '__main__':
 	try:
-		# ~ print(botpackage.nickname.processMessage(['!nickname', 'franz'], 'Franz'))
-		# ~ exit(0)
-		while True:
-			inp = input('')
-			for x in botpackage.__all__:
-				print(x.processMessage(inp.split(' ')[1:], {'name': inp.split(' ')[0], 'message': ''.join(inp.split(' ')[1:])}))
-			print()
-		# ~ mainloop()
+		# ~ while True:
+			# ~ inp = input('')
+			# ~ for x in botpackage.__all__:
+				# ~ print(x.processMessage(inp.split(' ')[1:], {'name': inp.split(' ')[0], 'message': ''.join(inp.split(' ')[1:])}))
+			# ~ print()
+		mainloop()
 	except KeyboardInterrupt:
 		pass
 	except Exception:
