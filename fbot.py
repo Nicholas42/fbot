@@ -25,7 +25,7 @@ def on_message(ws, message):
 	if messageDecoded['bottag'] in ['1', 1]:
 		return
 	args = [x.strip(' \t\n') for x in chatPost.split(' ')]
-	print('processing', args)
+	print('processing', repr(messageDecoded['message']))
 	for bot in botpackage.__all__:
 		answer = bot.processMessage(args, messageDecoded)
 		if answer is not None:
@@ -62,13 +62,13 @@ def mainloop():
 if __name__ == '__main__':
 	try:
 		if len(sys.argv) >= 2 and sys.argv[1] == 'console':
+			idd = 0
 			while True:
+				idd += 1
 				inp = input('')
 				inpSplit = inp.split(' ')
-				idd = 1
 				for x in botpackage.__all__:
 					print(x.processMessage(inp.split(' ')[1:], {'name': inp.split(' ')[0], 'message': ''.join(inp.split(' ')[1:]), 'id' : idd}))
-				idd += 1
 				print()
 		mainloop()
 	except KeyboardInterrupt:

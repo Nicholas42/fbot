@@ -1,5 +1,7 @@
 import sqlite3
 
+_posts_since_ping = 2
+
 def processMessage(args, rawMessage):
 	db_connection = sqlite3.connect('fbotdb.sqlite')
 	cursor = db_connection.cursor()
@@ -24,22 +26,24 @@ def processMessage(args, rawMessage):
 		cursor = db_connection.cursor()
 		for pong in \
 					cursor.execute(
-						'SELECT sender, message '
+						'SELECT sender, message, messageid '
 						'FROM pings '
 						'WHERE lower(recipient) == ? '
 						';', (nick.lower(), )
 		):
-			if message is None:
-				message = name + ', dir wollte jemand etwas sagen:'
-			message += '\n' + pong[0] + ' sagte: ' + pong[1]
 			cursor.execute(
 						'DELETE '
 						'FROM pings '
 						'WHERE lower(recipient) = ?'
 						';', (nick.lower(), ))
 			db_connection.commit()
+			if pong[2] + _posts_since_ping - 1 >= rawMessage['id']:
+				continue
+			if message is None:
+				message = rawMessage['name'] + ', dir wollte jemand etwas sagen:'
+			message += '\n' + pong[0] + ' sagte: ' + pong[1]
 
-	if len(args) > 1 and args[0] == '!ping':
+	if len(args) > 1 and args[0] == '!ping' and ''.join(args[2:]).strip(' \t\n') != '':
 		cursor = db_connection.cursor()
 		pingCount = cursor.execute(
 					'SELECT count(*) '
