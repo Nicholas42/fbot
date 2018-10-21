@@ -7,6 +7,10 @@ import websocket # websocket connections
 import sys
 import json # json
 
+import threading # lock
+_time_between_botposts = 2 # in seconds
+import time # sleep()
+
 from settings import credentials
 import botpackage
 
@@ -29,9 +33,11 @@ def on_message(ws, message):
 	for bot in botpackage.__all__:
 		answer = bot.processMessage(args, messageDecoded)
 		if answer is not None:
-			send(ws, answer['name'], answer['message'], messageDecoded['id'])
+			with sending_lock:
+				print('sending', answer['message'])
+				time.sleep(_time_between_botposts)
 
-def send(ws, name, chatPost, position):
+def send(ws, name, chatPost, position=0):
 	message = {
 		'channel' : 'fbot',
 		'name' : name,
@@ -60,6 +66,7 @@ def mainloop():
 
 
 if __name__ == '__main__':
+	sending_lock = threading.Lock()
 	try:
 		if len(sys.argv) >= 2 and sys.argv[1] == 'console':
 			idd = 0
