@@ -51,24 +51,26 @@ def processMessage(args, rawMessage):
 			cursor.execute(
 						'INSERT OR REPLACE '
 						'INTO pings '
-						'(recipient, message, sender) '
-						'VALUES (?, ?, ?)'
+						'(recipient, message, sender, messageid) '
+						'VALUES (?, ?, ?, ?)'
 						';', (
 							args[1],
 							''.join(x + ' ' for x in args[2:]).strip(),
-							name
+							rawMessage['name'],
+							rawMessage['id'],
 						)
 				)
 		else:
 			cursor.execute(
 						'UPDATE pings '
-						'SET message = ? '
+						'SET message = ?, messageid = ? '
 						'WHERE recipient = ? '
 						'AND sender = ?'
 						';', (
 							''.join(x + ' ' for x in args[2:]).strip(),
+							rawMessage['id'],
 							args[1],
-							name
+							rawMessage['name'],
 						)
 				)
 		db_connection.commit()

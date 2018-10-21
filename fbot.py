@@ -4,6 +4,7 @@ import requests # http requests
 import websocket # websocket connections
 
 # system libraries
+import sys
 import json # json
 
 from settings import credentials
@@ -60,11 +61,15 @@ def mainloop():
 
 if __name__ == '__main__':
 	try:
-		# ~ while True:
-			# ~ inp = input('')
-			# ~ for x in botpackage.__all__:
-				# ~ print(x.processMessage(inp.split(' ')[1:], {'name': inp.split(' ')[0], 'message': ''.join(inp.split(' ')[1:])}))
-			# ~ print()
+		if len(sys.argv) >= 2 and sys.argv[1] == 'console':
+			while True:
+				inp = input('')
+				inpSplit = inp.split(' ')
+				idd = 1
+				for x in botpackage.__all__:
+					print(x.processMessage(inp.split(' ')[1:], {'name': inp.split(' ')[0], 'message': ''.join(inp.split(' ')[1:]), 'id' : idd}))
+				idd += 1
+				print()
 		mainloop()
 	except KeyboardInterrupt:
 		pass
