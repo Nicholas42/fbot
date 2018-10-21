@@ -28,7 +28,7 @@ def processMessage(args, rawMessage):
 						'FROM pings '
 						'WHERE lower(recipient) == ? '
 						';', (nick.lower(), )
-					):
+		):
 			if message is None:
 				message = name + ', dir wollte jemand etwas sagen:'
 			message += '\n' + pong[0] + ' sagte: ' + pong[1]

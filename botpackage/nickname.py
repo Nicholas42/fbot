@@ -16,6 +16,9 @@ def processMessage(args, rawMessage):
 	db_connection = sqlite3.connect('fbotdb.sqlite')
 	cursor = db_connection.cursor()
 
+	if args[1].lower() == 'self':
+		args[1] = rawMessage['name']
+
 	useridQuery = cursor.execute(
 				'SELECT userid '
 				'FROM nicknames '
