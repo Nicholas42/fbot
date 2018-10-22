@@ -35,6 +35,7 @@ def on_message(ws, message):
 		if answer is not None:
 			with sending_lock:
 				print('sending', answer['message'])
+				send(ws, answer['name'], answer['message'], messageDecoded['id'])
 				time.sleep(_time_between_botposts)
 
 def send(ws, name, chatPost, position=0):

@@ -1,5 +1,7 @@
 import sqlite3
 
+from botpackage.helper import helper
+
 _help = 'usage: !nickname <nickname> [[-a|-r] <nickname>]'
 _botname = 'nicknamebot'
 
@@ -11,7 +13,7 @@ def processMessage(args, rawMessage):
 		return
 
 	if len(args) < 2:
-		return {'name' : _botname, 'message' : _help}
+		return helper.botMessage(_help, _botname)
 
 	db_connection = sqlite3.connect('fbotdb.sqlite')
 	cursor = db_connection.cursor()
@@ -25,7 +27,7 @@ def processMessage(args, rawMessage):
 				'WHERE lower(nickname) == ? '
 			';', (args[1].lower(), )).fetchone()
 	if useridQuery is None:
-		return {'name' : _botname, 'message' : 'Ich kenne ' + args[1] + ' nicht.'}
+		return helper.botMessage('Ich kenne ' + args[1] + ' nicht.', _botname)
 
 	userid = useridQuery[0]
 
@@ -55,7 +57,6 @@ def processMessage(args, rawMessage):
 		message = username + ' hat die Nicknames:\n'
 		for nickname in nicknames:
 			message += nickname + '\n'
-		# ~ return {'name' : _botname, 'message' : message}
 
 	# add, remove nicknames
 	elif len(args) == 4:
@@ -95,4 +96,4 @@ def processMessage(args, rawMessage):
 		message = _help
 
 	db_connection.close()
-	return {'name' : 'nicknamebot', 'message' : message}
+	return helper.botMessage(message, _botname)

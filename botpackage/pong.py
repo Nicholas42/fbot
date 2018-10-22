@@ -1,6 +1,7 @@
 _botname = 'lusie'
 _help = 'usage: !' + _botname + ' ping'
 
+from botpackage.helper import helper
 
 def processMessage(args, name):
 	if len(args) < 2:
@@ -14,4 +15,4 @@ def processMessage(args, name):
 	else:
 		message = _help
 
-	return {'name' : _botname, 'message' : message}
+	return helper.botMessage(message, _botname)

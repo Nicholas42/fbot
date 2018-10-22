@@ -1,5 +1,8 @@
 import sqlite3
 
+from botpackage.helper import helper
+
+_botname = 'pingbot'
 _posts_since_ping = 2
 
 def processMessage(args, rawMessage):
@@ -80,4 +83,4 @@ def processMessage(args, rawMessage):
 		db_connection.commit()
 
 	if message is not None:
-		return {'name' : 'pingbot', 'message' : message}
+		return helper.botMessage(message, _botname)
