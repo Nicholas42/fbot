@@ -33,10 +33,7 @@ def on_message(ws, message):
 	for bot in botpackage.__all__:
 		answer = bot.processMessage(args, messageDecoded)
 		if answer is not None:
-			with sending_lock:
-				print('sending', answer['message'])
-				send(ws, answer['name'], answer['message'], messageDecoded['id'])
-				time.sleep(_time_between_botposts)
+			send(ws, answer['name'], answer['message'], messageDecoded['id'])
 
 def send(ws, name, chatPost, position=0):
 	message = {
@@ -47,7 +44,9 @@ def send(ws, name, chatPost, position=0):
 		'publicid' : '1',
 		'bottag' : 1
 	}
-	ws.send(json.dumps(message))
+	with sending_lock:
+		ws.send(json.dumps(message))
+		time.sleep(_time_between_botposts)
 
 
 def create_ws():
