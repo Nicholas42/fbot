@@ -33,14 +33,14 @@ def on_message(ws, message):
 	for bot in botpackage.__all__:
 		answer = bot.processMessage(args, messageDecoded)
 		if answer is not None:
-			send(ws, answer['name'], answer['message'], messageDecoded['id'])
+			send(ws, answer['name'], answer['message'], messageDecoded['id']+1)
 
 def send(ws, name, chatPost, position=0):
 	message = {
 		'channel' : 'fbot',
 		'name' : name,
 		'message' : chatPost,
-		'delay' : position + 1,
+		'delay' : position,
 		'publicid' : '1',
 		'bottag' : 1
 	}
@@ -53,29 +53,40 @@ def create_ws():
 	authRequest = requests.post('https://chat.qed-verein.de/rubychat/account', data=credentials)
 
 	ws = websocket.WebSocketApp('wss://chat.qed-verein.de/websocket?channel=' + channel + '&position=-0&version=2',
-			cookie = "userid=440; pwhash=" + authRequest.cookies['pwhash'],
+			cookie = format_cookies({
+						'userid' : authRequest.cookies['userid'],
+						'pwhash' : authRequest.cookies['pwhash'],
+					}),
 			on_message = on_message,
 			on_error = on_error,
 			on_close = on_close,
 			)
 	return ws
 
+def format_cookies(obj):
+	retval = ''
+	for key in obj:
+		retval += key + '=' + obj[key] + ';'
+	return retval
+
+
 def mainloop():
-	ws = create_ws()
-	ws.run_forever()
+	create_ws().run_forever()
 
 
 if __name__ == '__main__':
 	sending_lock = threading.Lock()
 	try:
 		if len(sys.argv) >= 2 and sys.argv[1] == 'console':
-			idd = 0
+			eiDii = 0
 			while True:
-				idd += 1
+				eiDii += 1
 				inp = input('')
 				inpSplit = inp.split(' ')
-				for x in botpackage.__all__:
-					print(x.processMessage(inp.split(' ')[1:], {'name': inp.split(' ')[0], 'message': ''.join(inp.split(' ')[1:]), 'id' : idd}))
+				for bot in botpackage.__all__:
+					x = bot.processMessage(inp.split(' ')[1:], {'name': inp.split(' ')[0], 'message': ''.join(inp.split(' ')[1:]), 'id' : eiDii})
+					if x is not None:
+						print(x)
 				print()
 		mainloop()
 	except KeyboardInterrupt:
