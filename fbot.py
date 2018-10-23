@@ -14,7 +14,7 @@ import time # sleep()
 from settings import credentials
 import botpackage
 
-channel = 'fbot'
+channel = ''
 
 def on_close(ws):
 	print('ws closed')
