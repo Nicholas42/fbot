@@ -4,7 +4,6 @@ import requests # http requests
 import websocket # websocket connections
 
 # system libraries
-import sys # argv
 import json # json
 import argparse
 
@@ -20,6 +19,7 @@ def on_close(ws):
 def on_error(ws, error):
 	print('ws error: ' + error)
 
+args = None
 
 def on_message(ws, message):
 	messageDecoded = json.loads(message)
@@ -50,7 +50,7 @@ def send(ws, name, chatPost, position=0):
 def create_ws():
 	authRequest = requests.post('https://chat.qed-verein.de/rubychat/account', data=credentials)
 
-	ws = websocket.WebSocketApp('wss://chat.qed-verein.de/websocket?channel=' + channel + '&position=-0&version=2',
+	ws = websocket.WebSocketApp('wss://chat.qed-verein.de/websocket?channel=' + args['channel'] + '&position=-0&version=2',
 			cookie = format_cookies({
 						'userid' : authRequest.cookies['userid'],
 						'pwhash' : authRequest.cookies['pwhash'],
@@ -69,26 +69,28 @@ def format_cookies(obj):
 
 def mainloop():
 	parser = argparse.ArgumentParser()
-	parser.add_argument('-i', '--interactive')
-	parser.add_argument('--channel')
+	parser.add_argument('-i', '--interactive', action='store_true')
+	parser.add_argument('--channel', default='fbot')
 	args = vars(parser.parse_args())
 
-	if args['channel']:
-		channel = args['channel']
-
-		if args['interactive']:
-			eiDii = 0
-			while True:
-				eiDii += 1
+	if args['interactive'] == True:
+		eiDii = 0
+		while True:
+			eiDii += 1
+			try:
 				inp = input('')
-				inpSplit = inp.split(' ')
-				for bot in botpackage.__all__:
-					x = bot.processMessage(inp.split(' ')[1:], {'name': inp.split(' ')[0], 'message': ''.join(inp.split(' ')[1:]), 'id' : eiDii})
-					if x is not None:
-						print(x)
-				print()
-	else:
-		create_ws().run_forever()
+			except EOFError:
+				exit(0)
+			except:
+				raise
+			inpSplit = inp.split(' ')
+			for bot in botpackage.__all__:
+				x = bot.processMessage(inp.split(' ')[1:], {'name': inp.split(' ')[0], 'message': ''.join(inp.split(' ')[1:]), 'id' : eiDii})
+				if x is not None:
+					print(x)
+			print()
+
+	create_ws().run_forever()
 
 if __name__ == '__main__':
 	sending_lock = threading.Lock()

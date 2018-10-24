@@ -15,7 +15,7 @@ def processMessage(args, rawMessage):
 	if len(args) < 2:
 		return helper.botMessage(_help, _botname)
 
-	db_connection = sqlite3.connect('fbotdb.sqlite')
+	db_connection = sqlite3.connect('sqlite/fbotdb.sqlite')
 	cursor = db_connection.cursor()
 
 	if args[1].lower() == 'self':
