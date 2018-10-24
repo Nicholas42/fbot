@@ -4,17 +4,15 @@ import requests # http requests
 import websocket # websocket connections
 
 # system libraries
-import sys
+import sys # argv
 import json # json
+import argparse
 
 import threading # lock
-_time_between_botposts = 2 # in seconds
 import time # sleep()
 
-from settings import credentials
+from settings import *
 import botpackage
-
-channel = ''
 
 def on_close(ws):
 	print('ws closed')
@@ -69,15 +67,16 @@ def format_cookies(obj):
 		retval += key + '=' + obj[key] + ';'
 	return retval
 
-
 def mainloop():
-	create_ws().run_forever()
+	parser = argparse.ArgumentParser()
+	parser.add_argument('-i', '--interactive')
+	parser.add_argument('--channel')
+	args = vars(parser.parse_args())
 
+	if args['channel']:
+		channel = args['channel']
 
-if __name__ == '__main__':
-	sending_lock = threading.Lock()
-	try:
-		if len(sys.argv) >= 2 and sys.argv[1] == 'console':
+		if args['interactive']:
 			eiDii = 0
 			while True:
 				eiDii += 1
@@ -88,6 +87,13 @@ if __name__ == '__main__':
 					if x is not None:
 						print(x)
 				print()
+	else:
+		create_ws().run_forever()
+
+if __name__ == '__main__':
+	sending_lock = threading.Lock()
+
+	try:
 		mainloop()
 	except KeyboardInterrupt:
 		pass
