@@ -1,0 +1,5 @@
+# build the dockerimage
+docker build . --tag fbot
+
+# run the dockerimage
+docker run -v path/to/varspace:/varspace

@@ -10,7 +10,7 @@ import argparse
 import threading # lock
 import time # sleep()
 
-from settings import *
+from varspace.settings import *
 import botpackage
 
 def on_close(ws):
@@ -27,10 +27,11 @@ def on_message(ws, message):
 	if messageDecoded['bottag'] in ['1', 1]:
 		return
 	args = [x.strip(' \t\n') for x in chatPost.split(' ')]
-	print('processing', repr(messageDecoded['message']))
+	print('received', repr(messageDecoded['message']))
 	for bot in botpackage.__all__:
 		answer = bot.processMessage(args, messageDecoded)
 		if answer is not None:
+			print('sending', repr(answer['message']))
 			send(ws, answer['name'], answer['message'], messageDecoded['id']+1)
 
 def send(ws, name, chatPost, position=0):
@@ -47,7 +48,7 @@ def send(ws, name, chatPost, position=0):
 		time.sleep(_time_between_botposts)
 
 
-def create_ws():
+def create_ws(args):
 	authRequest = requests.post('https://chat.qed-verein.de/rubychat/account', data=credentials)
 
 	ws = websocket.WebSocketApp('wss://chat.qed-verein.de/websocket?channel=' + args['channel'] + '&position=-0&version=2',
@@ -67,7 +68,7 @@ def format_cookies(obj):
 		retval += key + '=' + obj[key] + ';'
 	return retval
 
-def mainloop():
+def mainloop(args):
 	parser = argparse.ArgumentParser()
 	parser.add_argument('-i', '--interactive', action='store_true')
 	parser.add_argument('--channel', default='fbot')
@@ -89,14 +90,13 @@ def mainloop():
 				if x is not None:
 					print(x)
 			print()
-
-	create_ws().run_forever()
+	create_ws(args).run_forever()
 
 if __name__ == '__main__':
 	sending_lock = threading.Lock()
 
 	try:
-		mainloop()
+		mainloop(args)
 	except KeyboardInterrupt:
 		pass
 	except Exception:

@@ -6,7 +6,7 @@ _botname = 'pingbot'
 _posts_since_ping = 2
 
 def processMessage(args, rawMessage):
-	db_connection = sqlite3.connect('sqlite/fbotdb.sqlite')
+	db_connection = sqlite3.connect('varspace/fbotdb.sqlite')
 	cursor = db_connection.cursor()
 
 	message = None
