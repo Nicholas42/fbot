@@ -26,7 +26,7 @@ def on_message(ws, message):
 	chatPost = messageDecoded['message']
 	if messageDecoded['bottag'] in ['1', 1]:
 		return
-	args = [x.strip(' \t\n') for x in chatPost.split(' ')]
+	args = split_with_quotation_marks(chatPost)
 	print('received', repr(messageDecoded['message']))
 	for bot in botpackage.__all__:
 		answer = bot.processMessage(args, messageDecoded)
@@ -67,6 +67,28 @@ def format_cookies(obj):
 	for key in obj:
 		retval += key + '=' + obj[key] + ';'
 	return retval
+
+def split_with_quotation_marks(s):
+	retval = ['']
+	quote_mode = None
+	_quotation_chars = ['\'', '"']
+	_space_chars = [' ', '\t', '\n']
+	for c in s:
+		if quote_mode is None:
+			if c in _quotation_chars:
+				quote_mode = c
+				retval.append('')
+			elif c in _space_chars:
+				retval.append('')
+				pass
+			else:
+				retval[len(retval)-1] += c
+		else:
+			if c == quote_mode:
+				quote_mode = None
+			else:
+				retval[len(retval)-1] += c
+	return [x for x in retval if x != '']
 
 def mainloop(args):
 	parser = argparse.ArgumentParser()
