@@ -5,7 +5,7 @@ from botpackage.helper import helper
 _botname = 'Luise'
 _help = '#name nick [-s|-a <int>|-r <int>]'
 
-def processMessage(args, rawMessage):
+def processMessage(args, rawMessage, db_connection):
 	if len(args) < 2:
 		return
 
@@ -15,7 +15,6 @@ def processMessage(args, rawMessage):
 	if args[0][0] not in ['#']:
 		return
 
-	db_connection = sqlite3.connect('varspace/fbotdb.sqlite')
 	cursor = db_connection.cursor()
 
 	useridQuery = cursor.execute(

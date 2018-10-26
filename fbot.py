@@ -2,7 +2,7 @@
 
 import requests # http requests
 import websocket # websocket connections
-
+import sqlite3
 # system libraries
 import json # json
 import argparse
@@ -29,7 +29,7 @@ def on_message(ws, message):
 	args = split_with_quotation_marks(chatPost)
 	print('received', repr(messageDecoded['message']))
 	for bot in botpackage.__all__:
-		answer = bot.processMessage(args, messageDecoded)
+		answer = bot.processMessage(args, messageDecoded, db_connection)
 		if answer is not None:
 			print('sending', repr(answer['message']))
 			send(ws, answer['name'], answer['message'], messageDecoded['id']+1)
@@ -90,6 +90,8 @@ def split_with_quotation_marks(s):
 				retval[len(retval)-1] += c
 	return [x for x in retval if x != '']
 
+db_connection = sqlite3.connect('varspace/fbotdb.sqlite')
+
 def mainloop(args):
 	parser = argparse.ArgumentParser()
 	parser.add_argument('-i', '--interactive', action='store_true')
@@ -109,7 +111,7 @@ def mainloop(args):
 				raise
 			inpSplit = split_with_quotation_marks(inp)
 			for bot in botpackage.__all__:
-				x = bot.processMessage(inpSplit[1:], {'name': ''.join(inpSplit[:1]), 'message': ' '.join([x + ' ' for x in inpSplit[1:]]), 'id' : eiDii})
+				x = bot.processMessage(inpSplit[1:], {'name': ''.join(inpSplit[:1]), 'message': ' '.join([x + ' ' for x in inpSplit[1:]]), 'id' : eiDii}, db_connection)
 				if x is not None:
 					print(x)
 			print()

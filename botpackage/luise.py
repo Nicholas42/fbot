@@ -3,7 +3,7 @@ _help = 'usage: !' + _botname + ' ping'
 
 from botpackage.helper import helper, ud
 
-def processMessage(args, name):
+def processMessage(args, rawMessage, db_connection):
 	if len(args) < 2:
 		return None
 

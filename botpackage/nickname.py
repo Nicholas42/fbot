@@ -6,7 +6,7 @@ _help = 'usage: !nickname <nickname> [[-a|-r] <nickname>]'
 _botname = 'nicknamebot'
 _max_nicks_pp = 25
 
-def processMessage(args, rawMessage):
+def processMessage(args, rawMessage, db_connection):
 	if len(args) == 0:
 		return
 	if args[0] not in ['!nickname', '!nicknames']:
@@ -15,7 +15,6 @@ def processMessage(args, rawMessage):
 	if len(args) < 2:
 		return helper.botMessage(_help, _botname)
 
-	db_connection = sqlite3.connect('varspace/fbotdb.sqlite')
 	cursor = db_connection.cursor()
 
 	if args[1].lower() == 'self':
