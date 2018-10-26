@@ -76,7 +76,6 @@ def processMessage(args, rawMessage):
 							'WHERE userid = ?'
 							';', (userid,)
 						).fetchone()
-				print(nickListLength[0])
 				if nickListLength[0] >= _max_nicks_pp:
 					return helper.botMessage(username + ' hat schon ' + str(_max_nicks_pp) + ' nicknames.', _botname)
 				cursor.execute('INSERT INTO nicknames (nickname, userid) VALUES (?, ?);', (args[3], userid))
@@ -89,7 +88,6 @@ def processMessage(args, rawMessage):
 						'WHERE lower(nickname) == ? '
 						'AND deletable == 0 '
 						';', (args[3].lower(), )).fetchone()
-			print(args)
 			if toRemoveCheck is None:
 				message = 'Ich kenne ' + args[3] + ' nicht.'
 			else:
