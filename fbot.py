@@ -106,9 +106,9 @@ def mainloop(args):
 				exit(0)
 			except:
 				raise
-			inpSplit = inp.split(' ')
+			inpSplit = split_with_quotation_marks(inp)
 			for bot in botpackage.__all__:
-				x = bot.processMessage(inp.split(' ')[1:], {'name': inp.split(' ')[0], 'message': ''.join(inp.split(' ')[1:]), 'id' : eiDii})
+				x = bot.processMessage(inp.split(' ')[1:], {'name': inpSplit[:1], 'message': ''.join(inpSplit[1:]), 'id' : eiDii})
 				if x is not None:
 					print(x)
 			print()
