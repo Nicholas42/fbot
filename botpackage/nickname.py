@@ -4,7 +4,7 @@ from botpackage.helper import helper
 
 _help = 'usage: !nickname <nickname> [[-a|-r] <nickname>]'
 _botname = 'nicknamebot'
-
+_max_nicks_pp = 25
 
 def processMessage(args, rawMessage):
 	if len(args) == 0:
@@ -70,16 +70,26 @@ def processMessage(args, rawMessage):
 			if toAddCheck is not None:
 				message = 'Der nickname ' + args[3] + ' existiert schon.'
 			else:
-				cursor = db_connection.cursor()
+				nickListLength = cursor.execute(
+							'SELECT COUNT(*) '
+							'FROM nicknames '
+							'WHERE userid = ?'
+							';', (userid,)
+						).fetchone()
+				print(nickListLength[0])
+				if nickListLength[0] >= _max_nicks_pp:
+					return helper.botMessage(username + ' hat schon ' + str(_max_nicks_pp) + ' nicknames.', _botname)
 				cursor.execute('INSERT INTO nicknames (nickname, userid) VALUES (?, ?);', (args[3], userid))
 				db_connection.commit()
-				message = username + ' hat nun den Nickname ' + args[3] + '.'
+				return helper.botMessage(username + ' hat nun den Nickname ' + args[3] + '.', _botname)
 		elif args[2] == '-r': # remove nickname
 			toRemoveCheck = cursor.execute(
 						'SELECT userid '
 						'FROM nicknames '
-						'WHERE lower(nickname) == ?'
+						'WHERE lower(nickname) == ? '
+						'AND deletable == 0 '
 						';', (args[3].lower(), )).fetchone()
+			print(args)
 			if toRemoveCheck is None:
 				message = 'Ich kenne ' + args[3] + ' nicht.'
 			else:
@@ -89,11 +99,11 @@ def processMessage(args, rawMessage):
 						'WHERE nickname == ?'
 						';', (args[3], ))
 				db_connection.commit()
-				message = username + ' hat jetzt den nicknamen ' + args[3] + ' nicht mehr.'
+				return helper.botMessage(username + ' hat jetzt den nicknamen ' + args[3] + ' nicht mehr.', _botname)
 		else:
-			message = _help
+			return helper.botMessage(_help, _botname)
 	else:
-		message = _help
+		return helper.botMessage(_help, _botname)
 
 	db_connection.close()
 	return helper.botMessage(message, _botname)
