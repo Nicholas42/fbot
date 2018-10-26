@@ -97,18 +97,19 @@ def mainloop(args):
 	args = vars(parser.parse_args())
 
 	if args['interactive'] == True:
+		print('fbot interactive mode. your wish?')
 		eiDii = 0
 		while True:
 			eiDii += 1
 			try:
-				inp = input('')
+				inp = input('> ')
 			except EOFError:
 				exit(0)
 			except:
 				raise
 			inpSplit = split_with_quotation_marks(inp)
 			for bot in botpackage.__all__:
-				x = bot.processMessage(inp.split(' ')[1:], {'name': inpSplit[:1], 'message': ''.join(inpSplit[1:]), 'id' : eiDii})
+				x = bot.processMessage(inpSplit[1:], {'name': ''.join(inpSplit[:1]), 'message': ' '.join([x + ' ' for x in inpSplit[1:]]), 'id' : eiDii})
 				if x is not None:
 					print(x)
 			print()

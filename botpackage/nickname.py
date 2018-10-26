@@ -58,7 +58,7 @@ def processMessage(args, rawMessage):
 		for nickname in nicknames:
 			message += nickname + '\n'
 
-	# add, remove nicknames
+	# add or remove nicknames
 	elif len(args) == 4:
 		if args[2] == '-a': # add nickname
 			cursor = db_connection.cursor() ## todo braucht man das wirklich
