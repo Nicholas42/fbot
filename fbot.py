@@ -47,9 +47,11 @@ def send(ws, name, chatPost, position=0):
 		ws.send(json.dumps(message))
 		time.sleep(_time_between_botposts)
 
+def getCookies():
+	return requests.post('https://chat.qed-verein.de/rubychat/account', data=credentials)
 
 def create_ws(args):
-	authRequest = requests.post('https://chat.qed-verein.de/rubychat/account', data=credentials)
+	authRequest = getCookies()
 
 	ws = websocket.WebSocketApp('wss://chat.qed-verein.de/websocket?channel=' + args['channel'] + '&position=-0&version=2',
 			cookie = format_cookies({
@@ -115,7 +117,9 @@ def mainloop(args):
 				if x is not None:
 					print(x)
 			print()
-	create_ws(args).run_forever()
+	while True:
+		create_ws(args).run_forever()
+		time.sleep(1)
 
 if __name__ == '__main__':
 	sending_lock = threading.Lock()
@@ -124,5 +128,3 @@ if __name__ == '__main__':
 		mainloop(args)
 	except KeyboardInterrupt:
 		pass
-	except Exception:
-		raise
