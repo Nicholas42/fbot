@@ -1,5 +1,5 @@
 _botname = 'Lusie'
-_help = 'usage: !' + _botname + ' ping'
+_help = 'usage: !' + _botname + ' [ping|ud expr]'
 
 from botpackage.helper import helper, ud
 
@@ -11,12 +11,10 @@ def processMessage(args, rawMessage, db_connection):
 		return
 
 	if args[1] == 'ping':
-		message = 'pong'
+		return helper.botMessage('pong', _botname)
 	elif args[1].lower() == 'ud':
 		if len(args) < 2:
-			return helper.botMessage(_help_ud, _botname)
+			return
 		return helper.botMessage(ud.ud_parser(args[2]), _botname)
 	else:
-		message = _help
-
-	return helper.botMessage(message, _botname)
+		return helper.botMessage(_help, _botname)
