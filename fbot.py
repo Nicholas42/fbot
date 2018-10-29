@@ -25,6 +25,7 @@ db_connection = sqlite3.connect('varspace/fbotdb.sqlite')
 def on_message(ws, message):
 	messageDecoded = json.loads(message)
 	chatPost = messageDecoded['message']
+	messageDecoded['name'] = messageDecoded['name'].strip(' \n\t\u200b')
 	if messageDecoded['bottag'] in ['1', 1]:
 		return
 	args = split_with_quotation_marks(chatPost)

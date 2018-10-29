@@ -59,6 +59,9 @@ def processMessage(args, rawMessage, db_connection):
 
 	# add or remove nicknames
 	elif len(args) == 4:
+		if args[3] in ['self']:
+			return helper.botMessage('Der nickname ' + args[3] + ' ist reserviert.', _botname)
+
 		if args[2] == '-a': # add nickname
 			cursor = db_connection.cursor() ## todo braucht man das wirklich
 			toAddCheck = cursor.execute(
@@ -93,8 +96,8 @@ def processMessage(args, rawMessage, db_connection):
 				cursor = db_connection.cursor()
 				cursor.execute(
 						'DELETE FROM nicknames '
-						'WHERE nickname == ?'
-						';', (args[3], ))
+						'WHERE lower(nickname) == ?'
+						';', (args[3].lower(), ))
 				db_connection.commit()
 				return helper.botMessage(username + ' hat jetzt den nicknamen ' + args[3] + ' nicht mehr.', _botname)
 		else:

@@ -36,7 +36,11 @@ def processMessage(args, rawMessage, db_connection):
 
 	cursor = db_connection.cursor()
 
-	userid = helper.useridFromUsername(cursor, args[1])
+	if args[1] == 'self':
+		userid = helper.useridFromUsername(cursor, rawMessage['name'])
+	else:
+		userid = helper.useridFromUsername(cursor, args[1])
+
 	if userid is None:
 		return helper.botMessage('Ich kenne ' + args[1] + ' nicht.', _botname)
 
@@ -49,18 +53,32 @@ def processMessage(args, rawMessage, db_connection):
 
 	if parsedArgs['toAdd'] == 0:
 		return helper.botMessage(username + ' hat ' + str(anzahl)  + ' ' + punktname[1:] + '.', _botname)
-	if parsedArgs['toAdd'] != 0:
+	else:
 		if punktid is None:
-			pass
 			cursor.execute(
-					'INSERT INTO freiepunkteliste (name) VALUES (?);',
-					(punktname,)
-				)
-		cursor.execute(
-						'INSERT INTO freiepunkte '
-						'(userid, freiepunkteid, anzahl) '
-						'VALUES (?, ?, 0) '
-						';', (userid, punktid,)
+						'INSERT INTO freiepunkteliste (name) VALUES (?);',
+						(punktname,)
+					)
+			punktid = cursor.execute(
+						'SELECT id FROM freiepunkteliste WHERE name == ?;',
+						(punktname,)
+					).fetchone()[0]
+		if anzahl is None:
+			anzahl = parsedArgs['toAdd']
+			cursor.execute(
+							'INSERT INTO freiepunkte '
+							'(userid, freiepunkteid, anzahl) '
+							'VALUES (?, ?, ?) '
+							';', (userid, punktid, anzahl)
+						)
+		else:
+			anzahl += parsedArgs['toAdd']
+			cursor.execute(
+						'UPDATE freiepunkte '
+						'SET anzahl = ? '
+						'WHERE freiepunkteid = ? '
+						'AND userid = ? '
+						';', (anzahl, punktid, userid)
 					)
 		db_connection.commit()
 		return helper.botMessage(username + ' hat jetzt ' + str(anzahl)  + ' ' + punktname[1:] + '.', _botname)
@@ -86,4 +104,4 @@ def anzahlFromPunktidAndUserid(cursor, punktid, userid):
 				';', (punktid, userid,)
 			).fetchone()
 
-	return 0 if query is None else query[0]
+	return None if query is None else query[0]
