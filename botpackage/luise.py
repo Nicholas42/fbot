@@ -13,6 +13,7 @@ def processMessage(args, rawMessage, db_connection):
 	if args[1] == 'ping':
 		return helper.botMessage('pong', _botname)
 	elif args[1].lower() == 'ud':
+		return
 		if len(args) < 2:
 			return
 		return helper.botMessage(ud.ud_parser(args[2]), _botname)
