@@ -1,5 +1,4 @@
 import sqlite3
-from enum import Enum
 
 from botpackage.helper import helper
 _botname = 'Luise'
@@ -15,96 +14,76 @@ def processMessage(args, rawMessage, db_connection):
 	if args[0][0] not in ['#']:
 		return
 
+
+	parsedArgs = {'punktName' : args[0], 'username' : args[1], 'toAdd' : 1}
+	try:
+		if len(args) >= 3:
+			if args[2] == '-s':
+				parsedArgs['toAdd'] = 0
+			elif args[2] == '-a':
+				if len(args) >= 4:
+					parsedArgs['toAdd'] = int(args[3])
+			elif args[2] == '-r':
+				if len(args) == 3:
+					parsedArgs['toAdd'] = -1
+				else:
+					parsedArgs['toAdd'] = int(args[3])
+			else:
+				return helper.botMessage(_help, _botname)
+	except ValueError:
+		return
+
+
 	cursor = db_connection.cursor()
 
-	useridQuery = cursor.execute(
-			'SELECT userid '
-			'FROM nicknames '
-			'WHERE lower(nickname) == ? '
-		';', (args[1].lower(), )).fetchone()
-	if useridQuery is None:
+	userid = helper.useridFromUsername(cursor, args[1])
+	if userid is None:
 		return helper.botMessage('Ich kenne ' + args[1] + ' nicht.', _botname)
 
-	userid = useridQuery[0]
+	username = helper.usernameFromUserid(cursor, userid)
 
-	modifyMode = False
-	if len(args) == 2:
-		modifyMode = True
-	else:
-		if args[2] in ['-a', '-r']:
-			modifyMode = True
+	punktname = args[0]
+	punktid = punktidFromPunktName(cursor, punktname)
 
-	username = cursor.execute(
-				'SELECT nickname '
-				'FROM nicknames '
-				'WHERE userid == ? '
-				'AND deletable == 1'
-				';', (userid, )).fetchone()[0]
+	anzahl = anzahlFromPunktidAndUserid(cursor, punktid, userid)
 
-	punktName = args[0]
-
-	freiepunktidAnfrage = cursor.execute(
-				'SELECT id FROM freiepunkteliste WHERE name = ?;',
-				(args[0],)
-			).fetchone()
-	if freiepunktidAnfrage is None:
-		punkteWert = 0
-		if modifyMode:
+	if parsedArgs['toAdd'] == 0:
+		return helper.botMessage(username + ' hat ' + str(anzahl)  + ' ' + punktname[1:] + '.', _botname)
+	if parsedArgs['toAdd'] != 0:
+		if punktid is None:
+			pass
 			cursor.execute(
 					'INSERT INTO freiepunkteliste (name) VALUES (?);',
-					(punktName,)
+					(punktname,)
 				)
-			freiepunktidAnfrage = cursor.execute(
-					'SELECT id FROM freiepunkteliste WHERE name = ?;',
-					(args[0],)
-				).fetchone()
-			punktId = freiepunktidAnfrage[0]
-	else:
-		punktId = freiepunktidAnfrage[0]
-
-	punkteWertQuery = cursor.execute(
-				'SELECT anzahl '
-				'FROM freiepunkte '
-				'WHERE userid == ? '
-				'AND freiepunkteid = ? '
-				';', (userid, punktId,)
-			).fetchone()
-
-	if punkteWertQuery is None:
-		punkteWert = 0
-	else:
-		punkteWert = punkteWertQuery[0]
-
-
-	if len(args) == 2:
-		if punkteWert is 0:
-			cursor.execute(
+		cursor.execute(
 						'INSERT INTO freiepunkte '
 						'(userid, freiepunkteid, anzahl) '
 						'VALUES (?, ?, 0) '
-						';', (userid, punktId,)
+						';', (userid, punktid,)
 					)
-		cursor.execute(
-					'UPDATE freiepunkte '
-					'SET anzahl = ? '
-					'WHERE userid = ? '
-					'AND freiepunkteid = ? '
-					';', (punkteWert + 1, userid, punktId)
-				)
-		print('updating for user', userid, 'with value', punkteWert+1)
 		db_connection.commit()
-		message = username + ' hat jetzt ' + str(punkteWert + 1)  + ' ' + punktName[1:] + '.'
-	else:
-		if args[2] in ['-s']:
-			message = username + ' hat ' + str(punkteWert)  + ' ' + punktName[1:] + '.'
-		elif len(args) < 4:
-			message = _help
-		else:
-			if args[2] == '-a':
-				message = 'adding not implemented'
-			elif args[2] == '-r':
-				message = 'removing not implemented'
-			else:
-				message = _help
+		return helper.botMessage(username + ' hat jetzt ' + str(anzahl + 1)  + ' ' + punktname[1:] + '.', _botname)
+	return
 
-	return helper.botMessage(message, _botname)
+
+def punktidFromPunktName(cursor, punktName):
+	query = cursor.execute(
+				'SELECT id FROM freiepunkteliste WHERE name = ?;',
+				(punktName.lower(),)
+			).fetchone()
+	return None if query is None else query[0]
+
+
+def anzahlFromPunktidAndUserid(cursor, punktid, userid):
+	if punktid is None:
+		return 0
+	query = cursor.execute(
+				'SELECT anzahl '
+				'FROM freiepunkte '
+				'WHERE freiepunkteid = ? '
+				'AND userid == ? '
+				';', (punktid, userid,)
+			).fetchone()
+
+	return 0 if query is None else query[0]
