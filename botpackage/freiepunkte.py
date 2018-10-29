@@ -37,12 +37,13 @@ def processMessage(args, rawMessage, db_connection):
 	cursor = db_connection.cursor()
 
 	if args[1] == 'self':
-		userid = helper.useridFromUsername(cursor, rawMessage['name'])
+		username = rawMessage['name']
 	else:
-		userid = helper.useridFromUsername(cursor, args[1])
+		username = args[1]
+	userid = helper.useridFromUsername(cursor, username)
 
 	if userid is None:
-		return helper.botMessage('Ich kenne ' + args[1] + ' nicht.', _botname)
+		return helper.botMessage('Ich kenne ' + username + ' nicht.', _botname)
 
 	username = helper.usernameFromUserid(cursor, userid)
 
