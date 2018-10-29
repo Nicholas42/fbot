@@ -63,7 +63,7 @@ def processMessage(args, rawMessage, db_connection):
 						';', (userid, punktid,)
 					)
 		db_connection.commit()
-		return helper.botMessage(username + ' hat jetzt ' + str(anzahl + 1)  + ' ' + punktname[1:] + '.', _botname)
+		return helper.botMessage(username + ' hat jetzt ' + str(anzahl)  + ' ' + punktname[1:] + '.', _botname)
 	return
 
 

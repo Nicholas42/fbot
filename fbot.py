@@ -20,6 +20,7 @@ def on_error(ws, error):
 	print('ws error: ' + error)
 
 args = None
+db_connection = sqlite3.connect('varspace/fbotdb.sqlite')
 
 def on_message(ws, message):
 	messageDecoded = json.loads(message)
@@ -34,9 +35,10 @@ def on_message(ws, message):
 			print('sending', repr(answer['message']))
 			send(ws, answer['name'], answer['message'], messageDecoded['id']+1)
 
+
 def send(ws, name, chatPost, position=0):
 	message = {
-		'channel' : 'fbot',
+		# ~ 'channel' : args['channel'],
 		'name' : name,
 		'message' : chatPost,
 		'delay' : position,
@@ -46,6 +48,7 @@ def send(ws, name, chatPost, position=0):
 	with sending_lock:
 		ws.send(json.dumps(message))
 		time.sleep(_time_between_botposts)
+
 
 def getCookies():
 	return requests.post('https://chat.qed-verein.de/rubychat/account', data=credentials)
@@ -63,6 +66,7 @@ def create_ws(args):
 			on_close = on_close,
 			)
 	return ws
+
 
 def format_cookies(obj):
 	retval = ''
@@ -92,7 +96,6 @@ def split_with_quotation_marks(s):
 				retval[len(retval)-1] += c
 	return [x for x in retval if x != '']
 
-db_connection = sqlite3.connect('varspace/fbotdb.sqlite')
 
 def mainloop(args):
 	parser = argparse.ArgumentParser()

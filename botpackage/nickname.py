@@ -102,5 +102,4 @@ def processMessage(args, rawMessage, db_connection):
 	else:
 		return helper.botMessage(_help, _botname)
 
-	db_connection.close()
 	return helper.botMessage(message, _botname)
