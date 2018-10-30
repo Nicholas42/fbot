@@ -38,14 +38,14 @@ def on_message(ws, message):
 
 
 def send(ws, name, chatPost, position=0):
-	message = {
+	message = dict(
 		# ~ 'channel' : args['channel'],
-		'name' : name,
-		'message' : chatPost,
-		'delay' : position,
-		'publicid' : '1',
-		'bottag' : 1
-	}
+		name = name,
+		message = chatPost,
+		delay = position,
+		publicid = '1',
+		bottag = 1
+	)
 	with sending_lock:
 		ws.send(json.dumps(message))
 		time.sleep(_time_between_botposts)
@@ -58,10 +58,10 @@ def create_ws(cookies, args):
 	authRequest = getCookies()
 
 	ws = websocket.WebSocketApp('wss://chat.qed-verein.de/websocket?channel=' + args['channel'] + '&position=-0&version=2',
-			cookie = format_cookies({
-						'userid' : authRequest.cookies['userid'],
-						'pwhash' : authRequest.cookies['pwhash'],
-					}),
+			cookie = format_cookies(dict(
+						userid = authRequest.cookies['userid'],
+						pwhash = authRequest.cookies['pwhash'],
+					)),
 			on_message = on_message,
 			on_error = on_error,
 			on_close = on_close,
