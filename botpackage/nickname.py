@@ -9,7 +9,7 @@ _max_nicks_pp = 25
 def processMessage(args, rawMessage, db_connection):
 	if len(args) == 0:
 		return
-	if args[0] not in ['!nickname', '!nicknames']:
+	if args[0].lower() not in ['!nickname', '!nicknames']:
 		return
 
 	if len(args) < 2:
@@ -40,7 +40,7 @@ def processMessage(args, rawMessage, db_connection):
 	# print nicknames
 	if len(args) == 2:
 		message = ''
-		nicknames = []
+		nicknamelist = []
 		for nickname in cursor.execute(
 					'SELECT nickname '
 					'FROM nicknames '
@@ -48,13 +48,13 @@ def processMessage(args, rawMessage, db_connection):
 					'AND deletable == 0'
 					';', (userid, )
 				):
-			nicknames.append(nickname[0])
+			nicknamelist.append(nickname[0])
 
-		if len(nicknames) < 1:
-			return
+		if len(nicknamelist) < 1:
+			return helper.botMessage(username + ' hat keine nicknames.', _botname)
 
 		message = username + ' hat die Nicknames:\n'
-		for nickname in nicknames:
+		for nickname in nicknamelist:
 			message += nickname + '\n'
 
 	# add or remove nicknames
