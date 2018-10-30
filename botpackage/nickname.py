@@ -59,7 +59,7 @@ def processMessage(args, rawMessage, db_connection):
 
 	# add or remove nicknames
 	elif len(args) == 4:
-		if args[3] in ['self']:
+		if args[3].lower() in ['self'] or args[3] == '-':
 			return helper.botMessage('Der nickname ' + args[3] + ' ist reserviert.', _botname)
 
 		if args[2] == '-a': # add nickname
