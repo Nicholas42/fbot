@@ -52,7 +52,14 @@ def send(ws, name, chatPost, position=0):
 
 
 def getCookies():
-	return requests.post('https://chat.qed-verein.de/rubychat/account', data=credentials)
+	while True:
+		try:
+			cookies = requests.post('https://chat.qed-verein.de/rubychat/account', data=credentials)
+		except ConnectionError as e:
+			print(e)
+		else:
+			return cookies
+		time.sleep(1)
 
 def create_ws(cookies, args):
 	authRequest = getCookies()
