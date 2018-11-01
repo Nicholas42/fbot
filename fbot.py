@@ -54,20 +54,25 @@ def send(ws, name, chatPost, position=0):
 def getCookies():
 	while True:
 		try:
-			cookies = requests.post('https://chat.qed-verein.de/rubychat/account', data=credentials)
-		except ConnectionError as e:
-			print(e)
+			req = requests.post('https://chat.qed-verein.de/rubychat/account', data=credentials)
+		except requests.exceptions.RequestException as e:
+			print('Error while downloading cookies:', e)
 		else:
-			return cookies
+			return req.cookies
 		time.sleep(1)
 
 def create_ws(cookies, args):
-	authRequest = getCookies()
+	try:
+		cookies['userid']
+		cookies['pwhash']
+	except AttributeError:
+		print('cookies not right')
+		return
 
 	ws = websocket.WebSocketApp('wss://chat.qed-verein.de/websocket?channel=' + args['channel'] + '&position=-0&version=2',
 			cookie = format_cookies(dict(
-						userid = authRequest.cookies['userid'],
-						pwhash = authRequest.cookies['pwhash'],
+						userid = cookies['userid'],
+						pwhash = cookies['pwhash'],
 					)),
 			on_message = on_message,
 			on_error = on_error,
@@ -130,11 +135,11 @@ def mainloop(args):
 			print()
 	cookies = getCookies()
 	while True:
-		try:
-			create_ws(cookies, args).run_forever()
-			time.sleep(1)
-		except ConnectionResetError:
-			pass
+		print('creating new websocket')
+		ws = create_ws(cookies, args)
+		if ws:
+			ws.run_forever()
+		time.sleep(1)
 
 if __name__ == '__main__':
 	sending_lock = threading.Lock()
