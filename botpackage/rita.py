@@ -23,10 +23,10 @@ def processMessage(args, rawMessage, db_connection):
 		return helper.botMessage('Hallu', _botname)
 
 	elif args[1].lower() == 'ud':
-		if len(args) > 3:
-			return helper.botMessage('http://www.urbandictionary.com/define.php?term=' + args[2], _botname)
-		return helper.botMessage(_help_ud, _botname)
-		return helper.botMessage(ud.ud_parser(args[2]), _botname)
+		if len(args) <= 2:
+			return helper.botMessage(_help_ud, _botname)
+		term = ''.join([x +' ' for x in args[2:]]).strip()
+		return helper.botMessage(ud.ud_parser(term), _botname)
 
 	elif args[1].lower() == 'decide':
 		if len(args) < 2:

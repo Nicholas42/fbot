@@ -6,8 +6,11 @@
 
 from bs4 import BeautifulSoup
 import requests
+import urllib
 
 def ud_parser(term):
+    return 'http://www.urbandictionary.com/define.php?term=' + urllib.parse.quote_plus(term)
+
     url='http://www.urbandictionary.com/define.php?term='
     s=requests.session()
     try:
