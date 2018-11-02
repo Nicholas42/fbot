@@ -10,7 +10,7 @@ _bottrigger = 'rita'
 _usageTemplate = 'usage: !' + _bottrigger + ' '
 _help = _usageTemplate + '[decide|ping|sing|ud] [args]'
 _help_sing = _usageTemplate + 'sing [song [-l|--learn|-r|--remove]]'
-
+_help_ud = _usageTemplate + 'ud <expr>'
 
 def processMessage(args, rawMessage, db_connection):
 	if len(args) < 2:
@@ -20,11 +20,12 @@ def processMessage(args, rawMessage, db_connection):
 		return
 
 	if args[1] == 'ping':
-		return helper.botMessage('pong', _botname)
+		return helper.botMessage('Hallu', _botname)
 
 	elif args[1].lower() == 'ud':
 		if len(args) > 3:
 			return helper.botMessage('http://www.urbandictionary.com/define.php?term=' + args[2], _botname)
+		return helper.botMessage(_help_ud, _botname)
 		return helper.botMessage(ud.ud_parser(args[2]), _botname)
 
 	elif args[1].lower() == 'decide':
