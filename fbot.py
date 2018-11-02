@@ -55,7 +55,7 @@ def getCookies():
 	while True:
 		try:
 			req = requests.post('https://chat.qed-verein.de/rubychat/account', data=credentials)
-		except requests.exceptions.RequestException as e:
+		except ConnectionResetError as e:
 			print('Error while downloading cookies:', e)
 		else:
 			return req.cookies
