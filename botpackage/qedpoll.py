@@ -42,7 +42,7 @@ def add_pollname(num, name, db_connection):
     cursor.execute("INSERT INTO qedpoll(name, num) values(?,?)", (name, num))
     db_connection.commit()
 
-    return helper.botMessage("Die Poll %s hat nun den Namen %s."%(num, name))
+    return helper.botMessage("Die Poll %s hat nun den Namen %s."%(num, name), _botname)
 
 
 def get_poll(poll, db_connection):
