@@ -29,7 +29,7 @@ def processMessage(args, rawMessage, db_connection):
 
 def add_pollname(num, name, db_connection):
     if not num.isnumeric():
-        return helper.botMessage("%s ist keine valide Pollnummer.", _botname)
+        return helper.botMessage("%s ist keine valide Pollnummer."%(num), _botname)
     if name[0].isnumeric():
         return helper.botMessage("Der Pollname darf nicht mit einer Zahl beginnen.", _botname)
 
@@ -70,7 +70,7 @@ def get_poll_from_num(poll):
     if not res.ok:
         return helper.botMessage("Ich kenne die Pollnummer %s nicht."%poll, _botname)
 
-    soup = BeautifulSoup(res.text)
+    soup = BeautifulSoup(res.text, features='lxml')
 
     title = soup.find("h1", {"class": "with-tabs"}).getText()
 
