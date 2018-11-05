@@ -17,7 +17,7 @@ def ud_parser(term):
         res=s.get(url+term)
     except e:
         return 'Fail'
-    soup=BeautifulSoup(res.text, features='lxml')
+    soup=BeautifulSoup(res.text, features='html.parser')
     body=soup.find('body')
     meaning=[i for i in body.findAll('div') if i.has_attr('class') and i['class']==['meaning'] ][0]
     return meaning.text

@@ -70,7 +70,7 @@ def get_poll_from_num(poll):
     if not res.ok:
         return helper.botMessage("Ich kenne die Pollnummer %s nicht."%poll, _botname)
 
-    soup = BeautifulSoup(res.text, features='lxml')
+    soup = BeautifulSoup(res.text, features='html.parser')
 
     title = soup.find("h1", {"class": "with-tabs"}).getText()
 
