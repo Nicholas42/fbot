@@ -118,7 +118,7 @@ def mainloop(args):
 	args = vars(parser.parse_args())
 
 	if args['interactive'] == True:
-		print('fbot interactive mode. your wish?')
+		print('fbot interactive mode. first word (space-delimeted) will be used as nick')
 		eiDii = 0
 		while True:
 			eiDii += 1
