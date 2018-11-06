@@ -76,6 +76,9 @@ def get_poll_from_num(poll):
 
     answers = [title,"\n"]
     polldiv = soup.find("div", {"class": "poll"})
+    if polldiv == None:
+        return helper.botMessage("Die Nummer %s gehört zu keiner Umfrage."%poll, _botname)
+
     for i in polldiv.findAll("div", {"class": "text"}):
         opinion = i.getText().strip()
         votes = i.findNextSibling("div", {"class": "percent"}).getText().strip()
