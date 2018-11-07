@@ -3,6 +3,8 @@ import sqlite3
 from botpackage.helper import helper
 _botname = 'Luise'
 _help = '#name nick [-s|-a <int>|-r <int>]'
+_unfreie_punkte_liste = ['fp', 'op']
+_unfreie_punkte = ['!' + x for x in _unfreie_punkte_liste]
 
 def processMessage(args, rawMessage, db_connection):
 	if len(args) < 2:
@@ -11,7 +13,7 @@ def processMessage(args, rawMessage, db_connection):
 	if '' in args[:2]:
 		return
 
-	if args[0][0] not in ['#']:
+	if args[0][0] not in ['#'] and args[0] not in _unfreie_punkte:
 		return
 
 
@@ -47,13 +49,15 @@ def processMessage(args, rawMessage, db_connection):
 
 	username = helper.usernameFromUserid(cursor, userid)
 
-	punktname = args[0]
-	punktid = punktidFromPunktName(cursor, punktname)
+	punktid = punktidFromPunktName(cursor, args[0])
+	punktname = punktNameFromPunktid(cursor, punktid)
+	if punktname == None:
+		punktname = args[0]
 
 	anzahl = anzahlFromPunktidAndUserid(cursor, punktid, userid)
 
 	if parsedArgs['toAdd'] == 0:
-		return helper.botMessage(username + ' hat ' + str(anzahl)  + ' ' + punktname[1:] + '.', _botname)
+		return helper.botMessage(username + ' hat ' + str(anzahl)  + ' ' + punktname + '.', _botname)
 	else:
 		if punktid is None:
 			cursor.execute(
@@ -82,7 +86,7 @@ def processMessage(args, rawMessage, db_connection):
 						';', (anzahl, punktid, userid)
 					)
 		db_connection.commit()
-		return helper.botMessage(username + ' hat jetzt ' + str(anzahl)  + ' ' + punktname[1:] + '.', _botname)
+		return helper.botMessage(username + ' hat jetzt ' + str(anzahl)  + ' ' + punktname + '.', _botname)
 	return
 
 
@@ -106,3 +110,13 @@ def anzahlFromPunktidAndUserid(cursor, punktid, userid):
 			).fetchone()
 
 	return None if query is None else query[0]
+
+
+def punktNameFromPunktid(cursor, punktid):
+	query = cursor.execute(
+				'SELECT alias FROM freiepunkteliste WHERE id = ?',
+				(punktid,)
+			).fetchone()
+	if query != None:
+		return query[0]
+	return None

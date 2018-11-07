@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS "pings" (
 CREATE TABLE `freiepunkteliste` (
 	`id`	INTEGER PRIMARY KEY AUTOINCREMENT,
 	`name`	TEXT
-);
+, alias TEXT);
 CREATE TABLE IF NOT EXISTS "freiepunkte" (
 	`userid`	INTEGER,
 	`freiepunkteid`	INTEGER,
