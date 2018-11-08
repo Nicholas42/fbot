@@ -29,7 +29,7 @@ def processMessage(args, rawMessage, db_connection):
 				if len(args) == 3:
 					parsedArgs['toAdd'] = -1
 				else:
-					parsedArgs['toAdd'] = int(args[3])
+					parsedArgs['toAdd'] = int(args[3]) * -1
 			else:
 				return helper.botMessage(_help, _botname)
 	except ValueError:
@@ -52,12 +52,13 @@ def processMessage(args, rawMessage, db_connection):
 	punktid = punktidFromPunktName(cursor, args[0])
 	punktname = punktNameFromPunktid(cursor, punktid)
 	if punktname == None:
-		punktname = args[0][1:]
+		punktname = args[0]
+	punktnameToDisplay = punktname[1:]
 
 	anzahl = anzahlFromPunktidAndUserid(cursor, punktid, userid)
 
 	if parsedArgs['toAdd'] == 0:
-		return helper.botMessage(username + ' hat ' + str(anzahl)  + ' ' + punktname + '.', _botname)
+		return helper.botMessage(username + ' hat ' + str(anzahl)  + ' ' + punktnameToDisplay + '.', _botname)
 	else:
 		if punktid is None:
 			cursor.execute(
@@ -86,7 +87,7 @@ def processMessage(args, rawMessage, db_connection):
 						';', (anzahl, punktid, userid)
 					)
 		db_connection.commit()
-		return helper.botMessage(username + ' hat jetzt ' + str(anzahl)  + ' ' + punktname + '.', _botname)
+		return helper.botMessage(username + ' hat jetzt ' + str(anzahl)  + ' ' + punktnameToDisplay + '.', _botname)
 	return
 
 

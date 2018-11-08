@@ -10,9 +10,9 @@ def processMessage(args, rawMessage, db_connection):
 
 	message = None
 
-	recipientNicks = [rawMessage['name']]
+	recipientNicks = [rawMessage['name'].lower()]
 	for nick in cursor.execute(
-				'SELECT nickname '
+				'SELECT lower(nickname) '
 				'FROM nicknames '
 				'WHERE userid = ('
 					'SELECT userid '
@@ -21,9 +21,11 @@ def processMessage(args, rawMessage, db_connection):
 					'ORDER BY deletable DESC'
 				');', (rawMessage['name'].lower(),)
 		):
-		if nick[0] not in recipientNicks:
-			recipientNicks.append(nick[0])
+		if nick[0].lower() not in recipientNicks:
+			recipientNicks.append(nick[0].lower())
 
+
+	notThisPing = False
 	for nick in recipientNicks:
 		cursor = db_connection.cursor()
 		for pong in \
@@ -32,18 +34,24 @@ def processMessage(args, rawMessage, db_connection):
 						'FROM pings '
 						'WHERE lower(recipient) == ? '
 						';', (nick.lower(), )
-		):
-			cursor.execute(
-						'DELETE '
-						'FROM pings '
-						'WHERE lower(recipient) = ?'
-						';', (nick.lower(), ))
-			db_connection.commit()
+				):
+			print('pong is', pong)
 			if pong[2] + _posts_since_ping - 1 >= rawMessage['id']:
-				continue
-			if message is None:
-				message = rawMessage['name'] + ', dir wollte jemand etwas sagen:'
-			message += '\n' + pong[0] + ' sagte: ' + pong[1]
+				notThisPing = True
+			if notThisPing == False:
+				if message is None:
+					message = rawMessage['name'] + ', dir wollte jemand etwas sagen:'
+				message += '\n' + pong[0] + ' sagte: ' + pong[1]
+			else:
+				notThisPing = False
+			# ~ cursor.execute(
+						# ~ 'DELETE '
+						# ~ 'FROM pings '
+						# ~ 'WHERE sender == ? '
+						# ~ 'AND message == ? '
+						# ~ 'AND messageid == ? '
+						# ~ ';', (pong[0], pong[1], pong[2],))
+			# ~ db_connection.commit()
 
 	if len(args) > 1 and args[0] == '!ping' and ''.join(args[2:]).strip(' \t\n') != '':
 		cursor = db_connection.cursor()
