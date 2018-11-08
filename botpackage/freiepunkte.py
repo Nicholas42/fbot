@@ -52,7 +52,7 @@ def processMessage(args, rawMessage, db_connection):
 	punktid = punktidFromPunktName(cursor, args[0])
 	punktname = punktNameFromPunktid(cursor, punktid)
 	if punktname == None:
-		punktname = args[0]
+		punktname = args[0][1:]
 
 	anzahl = anzahlFromPunktidAndUserid(cursor, punktid, userid)
 

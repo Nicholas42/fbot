@@ -54,6 +54,12 @@ def processMessage(args, rawMessage, db_connection):
 
 		return helper.botMessage(singasong(db_connection.cursor()), _botname)
 
+	elif args[1].lower() == 'slap':
+		if len(args) == 2:
+			return helper.botMessage('%s schlägt %s'%(_botname, rawMessage['name']), _botname)
+		else:
+			return helper.botMessage('%s schlägt %s'%(_botname, ''.join([x + ' ' for x in args[2:]]).strip()), _botname)
+
 	else:
 		return helper.botMessage(_help, _botname)
 

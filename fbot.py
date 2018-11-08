@@ -92,7 +92,7 @@ def split_with_quotation_marks(s):
 	retval = ['']
 	quote_mode = None
 	_quotation_chars = ['\'', '"']
-	_space_chars = [' ', '\t', '\n']
+	_space_chars = [' ', '\t', '\n', '\u200b']
 	for c in s:
 		if quote_mode is None:
 			if c in _quotation_chars:
