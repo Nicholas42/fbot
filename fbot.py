@@ -115,9 +115,13 @@ def mainloop(args):
 	parser = argparse.ArgumentParser()
 	parser.add_argument('-i', '--interactive', action='store_true')
 	parser.add_argument('--channel', default='fbot')
-	args = vars(parser.parse_args())
+	parser.add_argument('--mainchannel-on-my-own-risk', action='store_true')
+	parsedArgs = vars(parser.parse_args())
 
-	if args['interactive'] == True:
+	if parsedArgs['mainchannel_on_my_own_risk'] == True:
+		parsedArgs['channel'] = ''
+
+	if parsedArgs['interactive'] == True:
 		print('fbot interactive mode. first word (space-delimeted) will be used as nick')
 		eiDii = 0
 		while True:
@@ -137,7 +141,7 @@ def mainloop(args):
 	cookies = getCookies()
 	while True:
 		print('creating new websocket')
-		ws = create_ws(cookies, args)
+		ws = create_ws(cookies, parsedArgs)
 		if ws:
 			ws.run_forever()
 		time.sleep(1)
