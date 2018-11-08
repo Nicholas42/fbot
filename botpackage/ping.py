@@ -44,14 +44,14 @@ def processMessage(args, rawMessage, db_connection):
 				message += '\n' + pong[0] + ' sagte: ' + pong[1]
 			else:
 				notThisPing = False
-			# ~ cursor.execute(
-						# ~ 'DELETE '
-						# ~ 'FROM pings '
-						# ~ 'WHERE sender == ? '
-						# ~ 'AND message == ? '
-						# ~ 'AND messageid == ? '
-						# ~ ';', (pong[0], pong[1], pong[2],))
-			# ~ db_connection.commit()
+			cursor.execute(
+						'DELETE '
+						'FROM pings '
+						'WHERE sender == ? '
+						'AND message == ? '
+						'AND messageid == ? '
+						';', (pong[0], pong[1], pong[2],))
+			db_connection.commit()
 
 	if len(args) > 1 and args[0] == '!ping' and ''.join(args[2:]).strip(' \t\n') != '':
 		cursor = db_connection.cursor()
