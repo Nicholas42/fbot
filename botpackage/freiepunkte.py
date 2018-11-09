@@ -1,6 +1,8 @@
 import sqlite3
 
+import botpackage.helper.argparse as argparse
 from botpackage.helper import helper
+
 _botname = 'Luise'
 _help = '#name nick [-s|-a <int>|-r <int>]'
 _unfreie_punkte_liste = ['fp', 'op']
@@ -17,23 +19,20 @@ def processMessage(args, rawMessage, db_connection):
 		return
 
 
-	parsedArgs = {'punktName' : args[0], 'username' : args[1], 'toAdd' : 1}
+	parser = argparse.ArgumentParser()
+	parser.add_argument('punktName')
+	parser.add_argument('username')
+	parser.add_argument('-s', dest='toAdd', action='store_const', const=0)
+	parser.add_argument('-a', dest='toAdd', nargs='?', type=int, default=+1, const=+1)
+	parser.add_argument('-r', dest='toAdd', nargs='?', type=int, default=-1, const=-1)
+	parser.add_argument('müll', nargs='*')
 	try:
-		if len(args) >= 3:
-			if args[2] == '-s':
-				parsedArgs['toAdd'] = 0
-			elif args[2] == '-a':
-				if len(args) >= 4:
-					parsedArgs['toAdd'] = int(args[3])
-			elif args[2] == '-r':
-				if len(args) == 3:
-					parsedArgs['toAdd'] = -1
-				else:
-					parsedArgs['toAdd'] = int(args[3]) * -1
-			else:
-				return helper.botMessage(_help, _botname)
-	except ValueError:
-		return
+		parsedArgs = vars(parser.parse_known_args(args)[0])
+	except argparse.ArgumentError:
+		return helper.botMessage(_help, _botname)
+
+	if parsedArgs['toAdd'] == None:
+		parsedArgs['toAdd'] = 1
 
 
 	cursor = db_connection.cursor()
