@@ -13,7 +13,7 @@ _help_sing = _usageTemplate + 'sing [song [-l|--learn|-r|--remove]]'
 _help_ud = _usageTemplate + 'ud <expr>'
 _alternate_names = {
 	'manf':['Hack the planet!','Paladschinken'],
-	'kathie':['Ich bin nicht putzig!.','Kathie'],
+	'kathie':['Ich bin nicht putzig.','Kathie'],
 	'luise':['Lalala','Luise'],
 	'nicholas':['Ich fühle mich so alt.','Nicholas']}
 
