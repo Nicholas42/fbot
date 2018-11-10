@@ -2,7 +2,7 @@ import sqlite3
 
 from botpackage.helper import helper
 
-_botname = 'pingbot'
+_botname = 'Daniel'
 _posts_since_ping = 2
 
 def processMessage(args, rawMessage, db_connection):

@@ -11,10 +11,25 @@ _usageTemplate = 'usage: !' + _bottrigger + ' '
 _help = _usageTemplate + '[decide|ping|sing|ud] [args]'
 _help_sing = _usageTemplate + 'sing [song [-l|--learn|-r|--remove]]'
 _help_ud = _usageTemplate + 'ud <expr>'
+_alternate_names = {
+	'manf':['Hack the planet!','Paladschinken'],
+	'kathie':['Ich bin nicht putzig!.','Kathie'],
+	'luise':['Lalala','Luise'],
+	'nicholas':['Ich fühle mich so alt.','Nicholas']}
+
 
 def processMessage(args, rawMessage, db_connection):
 	if len(args) < 2:
 		return None
+
+	if len(args[0]) >= 2:
+		try:
+			_alternate_names[args[0].lower()[1:]]
+		except KeyError:
+			print('ke')
+			pass
+		else:
+			return helper.botMessage(_alternate_names[args[0].lower()[1:]][0], _alternate_names[args[0].lower()[1:]][1])
 
 	if args[0].lower() != '!' + _bottrigger.lower():
 		return
