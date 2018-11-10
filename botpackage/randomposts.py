@@ -5,7 +5,7 @@ from botpackage.helper import helper
 _randompost_propability = 500
 _names = {
 	'manf':['Hack the planet!','Paladschinken'],
-	'kathie':['Ich bin nicht putzig.','Kathie'],
+	'kathie':['Ich bin voll putzig.','Kathie'],
 	'luise':['Lalalalalalalalalalala','Luise'],
 	'nicholas':['Knuddeln ist Sport.','Nicholas']
 }
