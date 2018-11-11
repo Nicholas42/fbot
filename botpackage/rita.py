@@ -4,9 +4,10 @@ import random
 
 import botpackage.helper.argparse as argparse # ~ import argparse
 from botpackage.helper import helper, ud
+from botpackage.helper.mystrip import mystrip, stripFromBegin
 
 _botname = 'Dr. Ritastein'
-_bottrigger = 'rita'
+_bottrigger = 'rita'.lower()
 _usageTemplate = 'usage: !' + _bottrigger + ' '
 _help = _usageTemplate + '[decide|ping|sing|ud] [args]'
 _help_sing = _usageTemplate + 'sing [song [-l|--learn|-r|--remove]]'
@@ -58,7 +59,8 @@ def processMessage(args, rawMessage, db_connection):
 		if len(args) == 2:
 			return helper.botMessage('%s schlägt %s'%(_botname, rawMessage['name']), _botname)
 		else:
-			return helper.botMessage('%s schlägt %s'%(_botname, ''.join([x + ' ' for x in args[2:]]).strip()), _botname)
+			objectToSlap = stripFromBegin(rawMessage['message'], args[0:2])
+			return helper.botMessage('%s schlägt %s'%(_botname, objectToSlap), _botname)
 
 	else:
 		return helper.botMessage(_help, _botname)

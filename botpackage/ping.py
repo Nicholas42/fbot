@@ -1,8 +1,9 @@
 import sqlite3
 
 from botpackage.helper import helper
+from botpackage.helper.mystrip import stripFromBegin, mystrip
 
-_botname = 'Daniel'
+_botname = '                               Daniel                     '
 _posts_since_ping = 2
 
 def processMessage(args, rawMessage, db_connection):
@@ -50,7 +51,7 @@ def processMessage(args, rawMessage, db_connection):
 					';', (nick,))
 		# ~ db_connection.commit()
 
-	if len(args) > 1 and args[0] == '!ping' and ''.join(args[2:]).strip(' \t\n') != '':
+	if len(args) > 1 and args[0] == '!ping' and mystrip(''.join(args[2:])) != '':
 		cursor = db_connection.cursor()
 		pingCount = cursor.execute(
 					'SELECT count(*) '
@@ -66,7 +67,8 @@ def processMessage(args, rawMessage, db_connection):
 						'VALUES (?, ?, ?, ?)'
 						';', (
 							args[1],
-							''.join(x + ' ' for x in args[2:]).strip(),
+							# ~ ' '.join(args[2:]),
+							stripFromBegin(rawMessage['message'], args[0:2]),
 							rawMessage['name'],
 							rawMessage['id'],
 						)
