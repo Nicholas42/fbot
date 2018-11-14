@@ -29,11 +29,11 @@ db_connection = sqlite3.connect('varspace/fbotdb.sqlite')
 def on_message(ws, message):
 	messageDecoded = json.loads(message)
 	chatPost = messageDecoded['message']
-	messageDecoded['name'] = messageDecoded['name'].strip(_space_chars)
+	print('received', repr(messageDecoded['message']))
+	messageDecoded['name'] = messageDecoded['name'].strip(''.join(_space_chars))
 	if int(messageDecoded['bottag']) != 0:
 		return
 	args = split_with_quotation_marks(chatPost)
-	print('received', repr(messageDecoded['message']))
 	for bot in botpackage.__all__:
 		answer = bot.processMessage(args, messageDecoded, db_connection)
 		if answer is not None:
