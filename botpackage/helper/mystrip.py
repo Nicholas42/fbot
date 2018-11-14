@@ -9,4 +9,7 @@ def mylstrip(s : str):
 def stripFromBegin(s : str, a : list):
 	if len(a) == 0:
 		return s
-	return stripFromBegin(mylstrip(s[s.find(a[0]) + len(a[0]):]), a[1:])
+	return stripFromBegin(
+			s[s.find(a[0]) + len(a[0]):], a[1:]). \
+			strip(''.join(_space_chars)+'\'"'
+		)

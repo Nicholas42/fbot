@@ -7,13 +7,15 @@ import sqlite3
 # system libraries
 import json # json
 import argparse
-
 import threading # lock
 import time # sleep()
 
 from varspace.settings import *
 import botpackage
-from botpackage.helper.mystrip import mystrip, mylstrip, _space_chars
+
+from botpackage.helper.mystrip import _space_chars, stripFromBegin
+from botpackage.helper.split import split_with_quotation_marks
+
 
 def on_close(ws):
 	print('ws closed')
@@ -27,7 +29,7 @@ db_connection = sqlite3.connect('varspace/fbotdb.sqlite')
 def on_message(ws, message):
 	messageDecoded = json.loads(message)
 	chatPost = messageDecoded['message']
-	messageDecoded['name'] = mystrip(messageDecoded['name'])
+	messageDecoded['name'] = messageDecoded['name'].strip(_space_chars)
 	if int(messageDecoded['bottag']) != 0:
 		return
 	args = split_with_quotation_marks(chatPost)
@@ -89,27 +91,6 @@ def format_cookies(obj):
 		retval += key + '=' + obj[key] + ';'
 	return retval
 
-def split_with_quotation_marks(s):
-	retval = ['']
-	quote_mode = None
-	_quotation_chars = ['\'', '"']
-	for i in range(len(s)):
-		if quote_mode is None:
-			if s[i] in _quotation_chars and i > 0 and s[i-1] in _space_chars:
-				quote_mode = s[i]
-				retval.append('')
-			elif s[i] in _space_chars:
-				retval.append('')
-				pass
-			else:
-				retval[len(retval)-1] += s[i]
-		else:
-			if s[i] == quote_mode:
-				quote_mode = None
-			else:
-				retval[len(retval)-1] += s[i]
-	return [x for x in retval if x != '']
-
 
 def mainloop(args):
 	parser = argparse.ArgumentParser()
@@ -132,8 +113,9 @@ def mainloop(args):
 			inpSplit = split_with_quotation_marks(inp)
 			message = {
 				'name': ''.join(inpSplit[:1]),
-				'message': mystrip(inp[inp.find(inpSplit[0])+len(inpSplit[0])+1:]),
-				'id' : eiDii
+				'username' : None,
+				'message': stripFromBegin(inp, inpSplit[:1]),
+				'id' : eiDii,
 			}
 			for bot in botpackage.__all__:
 				x = bot.processMessage(inpSplit[1:], message, db_connection)

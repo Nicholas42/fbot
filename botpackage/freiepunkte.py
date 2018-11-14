@@ -26,6 +26,7 @@ def processMessage(args, rawMessage, db_connection):
 	group = parser.add_mutually_exclusive_group()
 	group.add_argument('-a', dest='toAdd', nargs='?', type=int, default=+1)
 	group.add_argument('-r', dest='toAdd', nargs='?', type=negative_int, const=-1)
+	# ~ group.add_argument('--', dest='toAdd', action='store_const', const=43, default=42)
 	try:
 		parsedArgs = vars(parser.parse_known_args(args)[0])
 	except argparse.ArgumentError:
