@@ -12,6 +12,9 @@ _usageTemplate = 'usage: !' + _bottrigger + ' '
 _help = _usageTemplate + '[decide|ping|sing|ud] [args]'
 _help_sing = _usageTemplate + 'sing [song [-l|--learn|-r|--remove]]'
 _help_ud = _usageTemplate + 'ud <expr>'
+_slap_trigger = 'slap'
+_featurerequest_trigger = 'featurerequest'
+
 
 def processMessage(args, rawMessage, db_connection):
 	if len(args) < 2:
@@ -26,7 +29,7 @@ def processMessage(args, rawMessage, db_connection):
 	elif args[1].lower() == 'ud':
 		if len(args) <= 2:
 			return helper.botMessage(_help_ud, _botname)
-		term = ''.join([x +' ' for x in args[2:]]).strip()
+		term = stripFromBegin(rawMessage['message'], args[0:2])
 		return helper.botMessage(ud.ud_parser(term), _botname)
 
 	elif args[1].lower() == 'decide':
@@ -55,12 +58,15 @@ def processMessage(args, rawMessage, db_connection):
 
 		return helper.botMessage(singasong(db_connection.cursor()), _botname)
 
-	elif args[1].lower() == 'slap':
+	elif args[1].lower() in [_slap_trigger, _featurerequest_trigger]:
 		if len(args) == 2:
-			return helper.botMessage('%s schlägt %s'%(_botname, rawMessage['name']), _botname)
-		else:
-			objectToSlap = stripFromBegin(rawMessage['message'], args[0:2])
-			return helper.botMessage('%s schlägt %s'%(_botname, objectToSlap), _botname)
+			return helper.botMessage('was meinst du?', _botname)
+
+		target = stripFromBegin(rawMessage['message'], args[0:2])
+		if args[1] == _slap_trigger:
+			return helper.botMessage('%s schlägt %s'%(_botname, target), _botname)
+		elif args[1] == _featurerequest_trigger:
+			return helper.botMessage('Ich will %s'%target, _botname)
 
 	else:
 		return helper.botMessage(_help, _botname)
