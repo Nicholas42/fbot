@@ -11,5 +11,5 @@ def stripFromBegin(s : str, a : list):
 		return s
 	return stripFromBegin(
 			s[s.find(a[0]) + len(a[0]):], a[1:]). \
-			strip(''.join(_space_chars)+'\'"'
+			strip(''.join(_space_chars)
 		)
