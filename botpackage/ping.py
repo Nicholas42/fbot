@@ -5,7 +5,7 @@ from botpackage.helper import helper
 from botpackage.helper.mystrip import stripFromBegin, _space_chars
 from botpackage.helper.split import split_with_quotation_marks
 
-_botname = '                               Daniel                     '
+_botname = 'navi'
 _posts_since_ping = 25
 
 def processMessage(args, rawMessage, db_connection):
@@ -34,13 +34,13 @@ def processMessage(args, rawMessage, db_connection):
 	pingProperties = dict(print=True, delete=True)
 	for nick in recipientNicks:
 		cursor = db_connection.cursor()
-		for pong in \
-					cursor.execute(
-						'SELECT sender, message, messageid '
-						'FROM pings '
-						'WHERE lower(recipient) == ? '
-						';', (nick.lower(), )
-				):
+		pongs = cursor.execute(
+				'SELECT sender, message, messageid, id '
+				'FROM pings '
+				'WHERE lower(recipient) == ? '
+				';', (nick.lower(), )
+				).fetchall()
+		for pong in pongs:
 			if pong[2] + _posts_since_ping > rawMessage['id']:
 				pingProperties['print'] = False
 			# ~ pongSplit = split_with_quotation_marks(pong[1])
@@ -59,23 +59,24 @@ def processMessage(args, rawMessage, db_connection):
 				message += '\n' + pong[0] + ' sagte: ' + pong[1]
 			else:
 				pingProperties['ping'] = True
-		# ~ if delete und so
-		cursor.execute(
-					'DELETE '
-					'FROM pings '
-					'WHERE LOWER(recipient) == ? '
-					';', (nick,))
-		# ~ db_connection.commit()
+			if pingProperties['delete']:
+				cursor.execute(
+							'DELETE '
+							'FROM pings '
+							'WHERE id == ? '
+							';', (pong[3],))
+		db_connection.commit()
 
 	if len(args) >= 2 and args[0] == '!ping' and ''.join(args[2:]).strip(''.join(_space_chars)) != '':
 		cursor = db_connection.cursor()
 		pingCount = cursor.execute(
 					'SELECT count(*) '
 					'FROM pings '
-					'WHERE recipient == ?'
-					';', (args[1], )
+					'WHERE recipient == ? '
+					'AND sender == ? '
+					';', (args[1], rawMessage['name'])
 		).fetchone()
-		if pingCount[0] is 0:
+		if pingCount[0] == 0:
 			cursor.execute(
 						'INSERT OR REPLACE '
 						'INTO pings '
