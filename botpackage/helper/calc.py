@@ -75,7 +75,7 @@ _mod = lambda x,y : x%y
 
 _operators = [
         ("-", 1, _rightas, _unary_eval({"-" : lambda x: -x})),
-        ("^", 2, _rightas, _binary_eval({"^": pow}, _rightas)),
+        ("^", 2, _rightas, _binary_eval({"^": lambda x,y: pow(y,x)}, _rightas)),
         (pyparsing.oneOf("* /"), 2, _leftas, _binary_eval({"*": _mul, "/": _div}, _leftas)),
         (pyparsing.oneOf("+ -"), 2, _leftas, _binary_eval({"+": _add, "-": _sub}, _leftas)),
         ("%", 2, _leftas, _binary_eval({"%": _mod}, _leftas))]
