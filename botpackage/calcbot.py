@@ -1,15 +1,17 @@
 import botpackage.helper.calc as calc
 import botpackage.helper.timeout as timeout
 from botpackage.helper import helper
+from botpackage.helper.mystrip import stripFromBegin, _space_chars
 
 _botname = '۞'
-_help = '%s <mathematischer Ausdruck>'%_botname
+_bottrigger = 'calc'
+_help = '%s <mathematischer Ausdruck>'%_bottrigger
 
 def processMessage(args, rawMessage, db_connection):
-    if len(args) < 1 or args[0].lower() != "!" + _botname:
+    if len(args) < 1 or args[0].lower() != "!" + _bottrigger:
         return
 
-    expr = rawMessage["message"].strip()[len("!" + _botname):]
+    expr = stripFromBegin(rawMessage["message"], ["!" + _bottrigger]).strip(''.join(_space_chars))
 
     ret = timeout.timed_run(calc.evaluate, [expr])
 
