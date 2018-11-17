@@ -2,7 +2,7 @@ import botpackage.helper.calc as calc
 import botpackage.helper.timeout as timeout
 from botpackage.helper import helper
 
-_botname = 'calc'
+_botname = '۞'
 _help = '%s <mathematischer Ausdruck>'%_botname
 
 def processMessage(args, rawMessage, db_connection):
@@ -19,5 +19,3 @@ def processMessage(args, rawMessage, db_connection):
         return helper.botMessage("Die Evaluierung dauerte zu lange.", _botname)
     else:
         return helper.botMessage("Das Ergebnis ist %s."%ret, _botname)
-
-    
