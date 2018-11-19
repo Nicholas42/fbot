@@ -20,4 +20,4 @@ def processMessage(args, rawMessage, db_connection):
     elif ret is None:
         return helper.botMessage("Die Evaluierung dauerte zu lange.", _botname)
     else:
-        return helper.botMessage("%s."%ret, _botname)
+        return helper.botMessage("%s"%ret, _botname)
