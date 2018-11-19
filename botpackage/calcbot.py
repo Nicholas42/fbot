@@ -8,7 +8,7 @@ _bottrigger = 'calc'
 _help = '%s <mathematischer Ausdruck>'%_bottrigger
 
 def processMessage(args, rawMessage, db_connection):
-	return
+    return
     if len(args) < 1 or args[0].lower() != "!" + _bottrigger:
         return
 
