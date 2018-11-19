@@ -138,6 +138,8 @@ def evaluate(s):
         return ev
     except ZeroDivisionError:
         return 'Ein Fehler trat auf: Division durch Null'
+    except OverflowError:
+        return 'Ein Fehler trat auf: Überlauf'
 
 if __name__ == "__main__":
     parsed = parse(sys.argv[1])
