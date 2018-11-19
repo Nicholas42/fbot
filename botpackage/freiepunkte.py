@@ -58,6 +58,8 @@ def processMessage(args, rawMessage, db_connection):
 	anzahl = anzahlFromPunktidAndUserid(cursor, punktid, userid)
 
 	if parsedArgs['toAdd'] == 0:
+		if anzahl == None:
+			anzahl = 0
 		return helper.botMessage(username + ' hat ' + str(anzahl)  + ' ' + punktnameToDisplay + '.', _botname)
 	else:
 		if punktid is None:
@@ -101,11 +103,11 @@ def punktidFromPunktName(cursor, punktName):
 
 def anzahlFromPunktidAndUserid(cursor, punktid, userid):
 	if punktid is None:
-		return 0
+		return None
 	query = cursor.execute(
 				'SELECT anzahl '
 				'FROM freiepunkte '
-				'WHERE freiepunkteid = ? '
+				'WHERE freiepunkteid == ? '
 				'AND userid == ? '
 				';', (punktid, userid,)
 			).fetchone()
