@@ -136,6 +136,8 @@ def evaluate(s):
         return e
     except TypeError:
         return ev
+    except ZeroDivisionError:
+        return 'Ein Fehler trat auf: Division durch Null'
 
 if __name__ == "__main__":
     parsed = parse(sys.argv[1])
