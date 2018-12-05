@@ -58,7 +58,7 @@ def processMessage(args, rawMessage, db_connection):
 			return learntosing(parsedArgs['song'], db_connection)
 		elif parsedArgs['remove']:
 			if rawMessage['username'] in botMasters:
-				return helper.botMessage(removeasong(parsedArgs['song'], db_connection), _botname)
+				return removeasong(parsedArgs['song'], db_connection)
 			else:
 				return helper.botMessage('ich habehabe einein Messer', _botname)
 
@@ -91,7 +91,6 @@ def learntosing(link, db_connection):
 		link = link.replace('youtube.de/','youtube.com/')
 		link = link.replace('youtu.be/','youtube.com/watch?v=')
 		link = link.replace('&feature=youtu.be', '')
-		print(link)
 		p=re.compile('^https:\/\/www.youtube.com\/watch\?v=[a-zA-Z0-9\-_]{,20}$')
 		if not p.match(link):
 			return helper.botMessage("Die url passt nicht ganz.", _botname)
@@ -107,7 +106,7 @@ def learntosing(link, db_connection):
 		# ~ print(vid_name)
 		cursor.execute("INSERT INTO songs (link) VALUES (?);", (link,))
 		db_connection.commit()
-		return helper.botMessage('Ich kann jetzt was Neues singen: %s.'%link, _botname)
+		return helper.botMessage('Ich kann jetzt was Neues singen: %s'%link, _botname)
 
 
 def songCount(cursor):
@@ -133,7 +132,7 @@ def removeasong(link, db_connection):
 				'SELECT id FROM songs WHERE link == ?;', (link,)
 			).fetchone()
 	if songid is None:
-		return helper.botMessage('Ich kenne '+link+' nicht.', _botname)
+		return helper.botMessage('Ich kenne %s nicht.'%link, _botname)
 	cursor.execute('DELETE FROM songs WHERE id == ?;', (songid[0],))
 	db_connection.commit()
-	return helper.botMessage('Ich kann jetzt '+link+' nicht mehr singen.', _botname)
+	return helper.botMessage('Ich kann jetzt %s nicht mehr singen.'%link, _botname)

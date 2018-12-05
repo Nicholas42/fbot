@@ -37,7 +37,6 @@ def on_message(ws, message):
 	for bot in botpackage.__all__:
 		answer = bot.processMessage(args, messageDecoded, db_connection)
 		if answer is not None:
-			print('sending', repr(answer['message']))
 			send(ws, answer['name'], answer['message'], messageDecoded['id']+1)
 
 
