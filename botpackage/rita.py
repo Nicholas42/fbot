@@ -5,9 +5,12 @@ import random
 import botpackage.helper.argparse as argparse # ~ import argparse
 from botpackage.helper import helper, ud
 from botpackage.helper.mystrip import mystrip, stripFromBegin
+import botpackage.helper.youtube as youtube
+from varspace.settings import botMasters
+
 
 _botname = 'Dr. Ritastein'
-_bottrigger = 'rita'.lower()
+_bottrigger = 'rita'
 _usageTemplate = 'usage: !' + _bottrigger + ' '
 _help = _usageTemplate + '[decide|ping|sing|ud] [args]'
 _help_sing = _usageTemplate + 'sing [song [-l|--learn|-r|--remove]]'
@@ -39,14 +42,14 @@ def processMessage(args, rawMessage, db_connection):
 		return helper.botMessage(antwort, _botname)
 
 	elif args[1].lower() == 'sing':
-		parser = argparse.ArgumentParser()
+		parser = argparse.ArgumentParser(prog='!rita sing')
 		parser.add_argument('song', nargs='?')
 		parser.add_argument('-l', '--learn', action='store_true', dest='learn')
 		parser.add_argument('-r', '--remove', action='store_true', dest='remove')
 		try:
 			parsedArgs = vars(parser.parse_args(args[2:]))
 		except argparse.ArgumentError:
-			return helper.botMessage(_help_sing, _botname)
+			return helper.botMessage(parser.print_usage(), _botname)
 
 		if ( parsedArgs['learn'] or parsedArgs['remove'] ) and parsedArgs['song'] is None:
 			return helper.botMessage(_help_sing, _botname)
@@ -54,7 +57,10 @@ def processMessage(args, rawMessage, db_connection):
 		if parsedArgs['learn']:
 			return learntosing(parsedArgs['song'], db_connection)
 		elif parsedArgs['remove']:
-			return helper.botMessage(removeasong(parsedArgs['song'], db_connection), _botname)
+			if rawMessage['username'] in botMasters:
+				return helper.botMessage(removeasong(parsedArgs['song'], db_connection), _botname)
+			else:
+				return helper.botMessage('ich habehabe einein Messer', _botname)
 
 		return helper.botMessage(singasong(db_connection.cursor()), _botname)
 
@@ -91,15 +97,14 @@ def learntosing(link, db_connection):
 				).fetchone()
 		if query is not None:
 			return helper.botMessage("Das kenn ich schon.", _botname)
-		# ~ vid = s.partition("?v=")[2]
-		# ~ url = "https://www.googleapis.com/youtube/v3/videos?part=id&id=%s&key=%s"
-		# ~ res = self.b.c.s.get(url%(vid,self.key))
-		# ~ resjson = json.loads(res.text)
-		# ~ if resjson['items'] == []:
-			# ~ return dict(name = str(self), message = "Ich glaube das Video gibts nicht")
+		# ~ vid_id = link.partition("?v=")[2]
+		# ~ vid_name = youtube.title(vid_id)
+		# ~ if not vid_name:
+			# ~ return helper.botMessage('Das Video gibts doch gar nicht..'%vid_name, _botname)
+		# ~ print(vid_name)
 		cursor.execute("INSERT INTO songs (link) VALUES (?);", (link,))
 		db_connection.commit()
-		return helper.botMessage('Ich kann jetzt '+link+' singen.', _botname)
+		return helper.botMessage('Ich kann jetzt was Neues singen: %s.'%link, _botname)
 
 
 def songCount(cursor):

@@ -43,7 +43,6 @@ def on_message(ws, message):
 
 def send(ws, name, chatPost, position=0):
 	message = dict(
-		# ~ 'channel' : args['channel'],
 		name = name,
 		message = chatPost,
 		delay = position,

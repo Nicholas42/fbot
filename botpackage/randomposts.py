@@ -2,12 +2,14 @@ import random
 
 from botpackage.helper import helper
 
-_randompost_one_over_probability = 700
+_randompost_one_over_probability = 1300
 _names = [
 	['Hack the planet!','Paladschinken'],
 	['Lalalalalalalalalalala','Luise'],
 	['Ich bin voll putzig. Du auch.','Kathie'],
 	['Knuddeln ist auch ein Sport. *knuddelt*','Nicholas'],
+	['Ich hab euch lieb.', 'Dr. Ritafail'],
+	['pingfang', 'Einhornpeter '],
 ]
 
 
