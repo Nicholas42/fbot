@@ -84,12 +84,14 @@ def learntosing(link, db_connection):
 		# ~ if e['user_id'] in self.singbans:
 			# ~ return helper.botMessage(message = "Ich hab Niveau!", _botname)
 		link = link.replace('http://','https://').strip()
-		if link.startswith('youtube'):
+		if link.startswith('youtube') or link.startswith('youtu.be'):
 			link = 'https://www.' + link
 		elif link.startswith('www.'):
 			link = 'https://'+s
 		link = link.replace('youtube.de/','youtube.com/')
 		link = link.replace('youtu.be/','youtube.com/watch?v=')
+		link = link.replace('&feature=youtu.be', '')
+		print(link)
 		p=re.compile('^https:\/\/www.youtube.com\/watch\?v=[a-zA-Z0-9\-_]{,20}$')
 		if not p.match(link):
 			return helper.botMessage("Die url passt nicht ganz.", _botname)
