@@ -1,7 +1,8 @@
 import sqlite3
 
 from botpackage.helper import helper
-from botpackage.helper.mystrip import mystrip
+from botpackage.helper.mystrip import norm
+
 
 _help = 'usage: !nickname <nickname> [[-a|-r] <nickname>]'
 _botname = 'nicknamebot'
@@ -19,7 +20,7 @@ def processMessage(args, rawMessage, db_connection):
 	cursor = db_connection.cursor()
 
 	if args[1].lower() == 'self':
-		args[1] = rawMessage['name']
+		args[1] = norm(rawMessage['name'])
 
 	useridQuery = cursor.execute(
 				'SELECT userid '

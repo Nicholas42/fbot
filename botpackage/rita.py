@@ -4,7 +4,7 @@ import random
 
 import botpackage.helper.argparse as argparse # ~ import argparse
 from botpackage.helper import helper, ud
-from botpackage.helper.mystrip import mystrip, stripFromBegin
+from botpackage.helper.mystrip import stripFromBegin, _space_chars
 import botpackage.helper.youtube as youtube
 from varspace.settings import botMasters
 
@@ -13,7 +13,6 @@ _botname = 'Dr. Ritastein'
 _bottrigger = 'rita'
 _usageTemplate = 'usage: !' + _bottrigger + ' '
 _help = _usageTemplate + '[decide|ping|sing|ud] [args]'
-_help_sing = _usageTemplate + 'sing [song [-l|--learn|-r|--remove]]'
 _help_ud = _usageTemplate + 'ud <expr>'
 _slap_trigger = 'slap'
 _featurerequest_trigger = 'featurerequest'
@@ -46,13 +45,18 @@ def processMessage(args, rawMessage, db_connection):
 		parser.add_argument('song', nargs='?')
 		parser.add_argument('-l', '--learn', action='store_true', dest='learn')
 		parser.add_argument('-r', '--remove', action='store_true', dest='remove')
+		parser.add_argument('-h', '--help', action='store_true')
+		parser.add_argument('-v', '--version', action='store_true') # needed
 		try:
 			parsedArgs = vars(parser.parse_args(args[2:]))
 		except argparse.ArgumentError:
 			return helper.botMessage(parser.print_usage(), _botname)
 
-		if ( parsedArgs['learn'] or parsedArgs['remove'] ) and parsedArgs['song'] is None:
-			return helper.botMessage(_help_sing, _botname)
+		if (( parsedArgs['learn'] or parsedArgs['remove'] ) and parsedArgs['song'] == None) or \
+					parsedArgs['help']:
+			return helper.botMessage(parser.format_usage().rstrip('\n'), _botname)
+		elif parsedArgs['version']:
+			return helper.botMessage('secret unlocked \o/ the first one calling w/ID gets some chocolate', _botmessage)
 
 		if parsedArgs['learn']:
 			return learntosing(parsedArgs['song'], db_connection)
@@ -83,7 +87,7 @@ def learntosing(link, db_connection):
 		cursor = db_connection.cursor()
 		# ~ if e['user_id'] in self.singbans:
 			# ~ return helper.botMessage(message = "Ich hab Niveau!", _botname)
-		link = link.replace('http://','https://').strip()
+		link = link.replace('http://','https://').strip(_space_chars)
 		if link.startswith('youtube') or link.startswith('youtu.be'):
 			link = 'https://www.' + link
 		elif link.startswith('www.'):

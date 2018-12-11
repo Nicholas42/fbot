@@ -1,15 +1,12 @@
-_space_chars = [' ', '\t', '\n', '\u200b']
-
-def mystrip(s : str):
-	return s.strip(''.join(_space_chars))
-
-def mylstrip(s : str):
-	return s.lstrip(''.join(_space_chars))
+_space_chars = ' \t\n\u200b'
 
 def stripFromBegin(s : str, a : list):
 	if len(a) == 0:
 		return s
 	return stripFromBegin(
 			s[s.find(a[0]) + len(a[0]):], a[1:]). \
-			strip(''.join(_space_chars)
-		)
+			lstrip(_space_chars)
+
+
+def norm(name):
+    return name.lower().strip(_space_chars)

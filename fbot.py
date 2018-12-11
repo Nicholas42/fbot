@@ -30,7 +30,6 @@ def on_message(ws, message):
 	messageDecoded = json.loads(message)
 	chatPost = messageDecoded['message']
 	print('received', repr(messageDecoded['message']))
-	messageDecoded['name'] = messageDecoded['name'].strip(''.join(_space_chars))
 	if int(messageDecoded['bottag']) != 0:
 		return
 	args = split_with_quotation_marks(chatPost)
@@ -118,7 +117,7 @@ def mainloop(args):
 			for bot in botpackage.__all__:
 				x = bot.processMessage(inpSplit[1:], message, db_connection)
 				if x is not None:
-					print(x)
+					print(repr(x['name']), ':', repr(x['message']))
 			print()
 
 	if parsedArgs['mainchannel_on_my_own_risk'] == True:

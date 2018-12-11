@@ -2,6 +2,7 @@ import sqlite3
 
 import botpackage.helper.argparse as argparse
 from botpackage.helper import helper
+from botpackage.helper.mystrip import norm
 
 _botname = 'Luise'
 _help = '#name nick [-s|-a <int>|-r <int>]'
@@ -38,7 +39,7 @@ def processMessage(args, rawMessage, db_connection):
 	cursor = db_connection.cursor()
 
 	if args[1] == 'self':
-		username = rawMessage['name']
+		username = norm(rawMessage['name'])
 	else:
 		username = args[1]
 	userid = helper.useridFromUsername(cursor, username)

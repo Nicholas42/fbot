@@ -2,8 +2,9 @@ import sqlite3
 import parsedatetime, datetime
 
 from botpackage.helper import helper
-from botpackage.helper.mystrip import stripFromBegin, _space_chars
+from botpackage.helper.mystrip import _space_chars, stripFromBegin, norm
 from botpackage.helper.split import split_with_quotation_marks
+
 
 _botname = 'navi'
 _posts_since_ping = 25
@@ -16,7 +17,7 @@ def processMessage(args, rawMessage, db_connection):
 	if rawMessage['username'] != None:
 		recipientNicks = [rawMessage['username'].lower()]
 	else:
-		recipientNicks = [rawMessage['name'].lower()]
+		recipientNicks = [norm(rawMessage['name'])]
 	for nick in cursor.execute(
 				'SELECT lower(nickname) '
 				'FROM nicknames '
@@ -55,7 +56,7 @@ def processMessage(args, rawMessage, db_connection):
 
 			if pingProperties['print'] == True:
 				if message == None:
-					message = rawMessage['name'] + ', dir wollte jemand etwas sagen:'
+					message = rawMessage['name'].strip(_space_chars) + ', dir wollte jemand etwas sagen:'
 				message += '\n' + pong[0] + ' sagte: ' + pong[1]
 			else:
 				pingProperties['ping'] = True
@@ -67,14 +68,14 @@ def processMessage(args, rawMessage, db_connection):
 							';', (pong[3],))
 		db_connection.commit()
 
-	if len(args) >= 2 and args[0] == '!ping' and ''.join(args[2:]).strip(''.join(_space_chars)) != '':
+	if len(args) >= 2 and args[0] == '!ping' and ''.join(args[2:]).strip(_space_chars) != '':
 		cursor = db_connection.cursor()
 		pingCount = cursor.execute(
 					'SELECT count(*) '
 					'FROM pings '
 					'WHERE recipient == ? '
 					'AND sender == ? '
-					';', (args[1], rawMessage['name'])
+					';', (args[1], rawMessage['name'].strip(_space_chars))
 		).fetchone()
 		if pingCount[0] == 0:
 			cursor.execute(
@@ -85,7 +86,7 @@ def processMessage(args, rawMessage, db_connection):
 						';', (
 							args[1],
 							stripFromBegin(rawMessage['message'], args[0:2]),
-							rawMessage['name'],
+							rawMessage['name'].strip(_space_chars),
 							rawMessage['id'],
 						)
 				)
@@ -96,10 +97,10 @@ def processMessage(args, rawMessage, db_connection):
 						'WHERE recipient = ? '
 						'AND sender = ?'
 						';', (
-							''.join(x + ' ' for x in args[2:]).strip(),
+							stripFromBegin(rawMessage['message'], args[0:2]),
 							rawMessage['id'],
 							args[1],
-							rawMessage['name'],
+							rawMessage['name'].strip(_space_chars),
 						)
 				)
 		db_connection.commit()

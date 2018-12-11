@@ -12,7 +12,7 @@ def processMessage(args, rawMessage, db_connection):
     if len(args) < 1 or args[0].lower() != "!" + _bottrigger:
         return
 
-    expr = stripFromBegin(rawMessage["message"], ["!" + _bottrigger]).strip(''.join(_space_chars))
+    expr = stripFromBegin(rawMessage["message"], ["!" + _bottrigger]).strip(_space_chars)
 
     ret = timeout.timed_run(calc.evaluate, [expr])
 
