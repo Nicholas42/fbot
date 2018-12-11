@@ -17,7 +17,7 @@ def processMessage(args, rawMessage, db_connection):
         return
 
     if len(args) < 2:
-        now = norm(rawMessage["name"])
+        now = rawMessage["name"].strip(_space_chars)
         if now != _last[0]:
             target = _last[0] # prev person
         else:
