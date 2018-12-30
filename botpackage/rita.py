@@ -48,7 +48,7 @@ def processMessage(args, rawMessage, db_connection):
 		parser.add_argument('-h', '--help', action='store_true')
 		parser.add_argument('-v', '--version', action='store_true') # needed
 		try:
-			parsedArgs = vars(parser.parse_args(args[2:]))
+			parsedArgs = vars(parser.parse_known_args(args[2:])[0])
 		except argparse.ArgumentError:
 			return helper.botMessage(parser.print_usage(), _botname)
 
@@ -74,7 +74,7 @@ def processMessage(args, rawMessage, db_connection):
 
 		target = stripFromBegin(rawMessage['message'], args[0:2])
 		if args[1] == _slap_trigger:
-			return helper.botMessage('%s schlägt %s'%(_botname, target), _botname)
+			return helper.botMessage('%s schlägt %s'%(_botname.replace('Dr. Ritastein', 'Rita'), target), _botname)
 		elif args[1] == _featurerequest_trigger:
 			return helper.botMessage('Ich will %s'%target, _botname)
 

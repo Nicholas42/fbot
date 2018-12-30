@@ -6,7 +6,7 @@ from botpackage.helper.mystrip import _space_chars, stripFromBegin, norm
 from botpackage.helper.split import split_with_quotation_marks
 
 
-_botname = 'navi'
+_botname = 'Navi'
 _posts_since_ping = 25
 
 def processMessage(args, rawMessage, db_connection):

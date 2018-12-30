@@ -45,7 +45,7 @@ def processMessage(args, rawMessage, db_connection):
 	userid = helper.useridFromUsername(cursor, username)
 
 	if userid is None:
-		return helper.botMessage('Ich kenne ' + username + ' nicht.', _botname)
+		return helper.botMessage('Ich kenne %s nicht.'%username, _botname)
 
 	username = helper.usernameFromUserid(cursor, userid)
 
@@ -60,7 +60,7 @@ def processMessage(args, rawMessage, db_connection):
 	if parsedArgs['toAdd'] == 0:
 		if anzahl == None:
 			anzahl = 0
-		return helper.botMessage(username + ' hat ' + str(anzahl)  + ' ' + punktnameToDisplay + '.', _botname)
+		return helper.botMessage(username + ' hat ' + str(anzahl)  + ' ' + punktnameToDisplay + '.', punktnameToDisplay)
 	else:
 		if punktid is None:
 			cursor.execute(
@@ -89,7 +89,7 @@ def processMessage(args, rawMessage, db_connection):
 						';', (anzahl, punktid, userid)
 					)
 		db_connection.commit()
-		return helper.botMessage(username + ' hat jetzt ' + str(anzahl)  + ' ' + punktnameToDisplay + '.', _botname)
+		return helper.botMessage(username + ' hat jetzt ' + str(anzahl)  + ' ' + punktnameToDisplay + '.', punktnameToDisplay)
 	return
 
 
