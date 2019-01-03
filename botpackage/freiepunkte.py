@@ -16,7 +16,7 @@ def processMessage(args, rawMessage, db_connection):
 	if '' in args[:2]:
 		return
 
-	if args[0][0] not in ['#'] and args[0] not in _unfreie_punkte:
+	if args[0][0] not in ['#'] and args[0].lower() not in _unfreie_punkte:
 		return
 
 

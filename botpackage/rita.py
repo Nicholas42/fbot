@@ -83,6 +83,8 @@ def processMessage(args, rawMessage, db_connection):
 
 
 
+linkRegex=re.compile('^(https:\/\/www.youtube.com\/watch\?v=[a-zA-Z0-9\-_]{,20})(&t=\d+)?$')
+
 def learntosing(link, db_connection):
 		cursor = db_connection.cursor()
 		# ~ if e['user_id'] in self.singbans:
@@ -95,11 +97,11 @@ def learntosing(link, db_connection):
 		link = link.replace('youtube.de/','youtube.com/')
 		link = link.replace('youtu.be/','youtube.com/watch?v=')
 		link = link.replace('&feature=youtu.be', '')
-		p=re.compile('^https:\/\/www.youtube.com\/watch\?v=[a-zA-Z0-9\-_]{,20}$')
-		if not p.match(link):
+		if not linkRegex.match(link):
 			return helper.botMessage("Die url passt nicht ganz.", _botname)
+		print(re.sub(linkRegex, '\\1', link)+'%')
 		query = cursor.execute(
-					"SELECT id FROM songs WHERE link = ?;", (link,)
+					"SELECT id FROM songs WHERE link LIKE ?;", (re.sub(linkRegex, '\\1', link)+'%', ),
 				).fetchone()
 		if query is not None:
 			return helper.botMessage("Das kenn ich schon.", _botname)
