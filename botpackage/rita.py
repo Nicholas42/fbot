@@ -90,16 +90,16 @@ def learntosing(link, db_connection):
 		# ~ if e['user_id'] in self.singbans:
 			# ~ return helper.botMessage(message = "Ich hab Niveau!", _botname)
 		link = link.replace('http://','https://').strip(_space_chars)
-		if link.startswith('youtube') or link.startswith('youtu.be'):
+		link = link.replace('youtu.be/','www.youtube.com/watch?v=')
+		if link.startswith('youtube'):
 			link = 'https://www.' + link
 		elif link.startswith('www.'):
-			link = 'https://'+s
+			link = 'https://' + link
 		link = link.replace('youtube.de/','youtube.com/')
-		link = link.replace('youtu.be/','youtube.com/watch?v=')
 		link = link.replace('&feature=youtu.be', '')
 		if not linkRegex.match(link):
 			return helper.botMessage("Die url passt nicht ganz.", _botname)
-		print(re.sub(linkRegex, '\\1', link)+'%')
+
 		query = cursor.execute(
 					"SELECT id FROM songs WHERE link LIKE ?;", (re.sub(linkRegex, '\\1', link)+'%', ),
 				).fetchone()
