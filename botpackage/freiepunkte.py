@@ -38,7 +38,7 @@ def processMessage(args, rawMessage, db_connection):
 
 	cursor = db_connection.cursor()
 
-	if args[1] == 'self':
+	if args[1] in ['self', 'selbst']:
 		username = norm(rawMessage['name'])
 	else:
 		username = args[1]

@@ -19,7 +19,7 @@ def processMessage(args, rawMessage, db_connection):
 
 	cursor = db_connection.cursor()
 
-	if args[1].lower() == 'self':
+	if args[1].lower() in ['self', 'selbst']:
 		args[1] = norm(rawMessage['name'])
 
 	useridQuery = cursor.execute(
@@ -61,7 +61,7 @@ def processMessage(args, rawMessage, db_connection):
 
 	# add or remove nicknames
 	elif len(args) == 4:
-		if args[3].lower() in ['self'] or args[3] == '-':
+		if args[3].lower() in ['self', 'selbst'] or args[3] == '-':
 			return helper.botMessage('Der nickname ' + args[3] + ' ist reserviert.', _botname)
 
 		if args[2] == '-a': # add nickname
