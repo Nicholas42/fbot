@@ -6,7 +6,7 @@ from botpackage.helper.mystrip import norm
 
 _botname = 'Luise'
 _help = '#name nick [-s|-a <int>|-r <int>]'
-_unfreie_punkte_liste = ['fp', 'op']
+_unfreie_punkte_liste = ['fp', 'jp', 'op', 'tp']
 _unfreie_punkte = ['!' + x for x in _unfreie_punkte_liste]
 
 def processMessage(args, rawMessage, db_connection):
