@@ -22,14 +22,16 @@ def processMessage(args, rawMessage, db_connection):
 
 	parser = argparse.ArgumentParser()
 	parser.add_argument('punktName', metavar='Punkt')
-	parser.add_argument('username', metavar='Nick')
+	parser.add_argument('username', metavar='Nick', nargs='?', default='self')
 	parser.add_argument('-s', dest='toAdd', action='store_const', const=0)
 	group = parser.add_mutually_exclusive_group()
 	group.add_argument('-a', dest='toAdd', nargs='?', type=int, default=+1)
 	group.add_argument('-r', dest='toAdd', nargs='?', type=negative_int, const=-1)
 	try:
 		parsedArgs = vars(parser.parse_known_args([x if x != '--' else '-r' for x in args])[0])
-	except argparse.ArgumentError:
+		print(parsedArgs)
+	except argparse.ArgumentError as e:
+		print(e)
 		return helper.botMessage(str.replace(parser.format_usage(), '\n', ''), _botname)
 
 	if parsedArgs['toAdd'] == None:
@@ -38,10 +40,10 @@ def processMessage(args, rawMessage, db_connection):
 
 	cursor = db_connection.cursor()
 
-	if args[1] in ['self', 'selbst']:
+	if parsedArgs['username'] in ['self', 'selbst']:
 		username = norm(rawMessage['name'])
 	else:
-		username = args[1]
+		username = parsedArgs['username']
 	userid = helper.useridFromUsername(cursor, username)
 
 	if userid is None:
