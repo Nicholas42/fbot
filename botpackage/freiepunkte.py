@@ -29,9 +29,7 @@ def processMessage(args, rawMessage, db_connection):
 	group.add_argument('-r', dest='toAdd', nargs='?', type=negative_int, const=-1)
 	try:
 		parsedArgs = vars(parser.parse_known_args([x if x != '--' else '-r' for x in args])[0])
-		print(parsedArgs)
-	except argparse.ArgumentError as e:
-		print(e)
+	except argparse.ArgumentError:
 		return helper.botMessage(str.replace(parser.format_usage(), '\n', ''), _botname)
 
 	if parsedArgs['toAdd'] == None:
@@ -97,7 +95,7 @@ def processMessage(args, rawMessage, db_connection):
 
 def punktidFromPunktName(cursor, punktName):
 	query = cursor.execute(
-				'SELECT id FROM freiepunkteliste WHERE name = ?;',
+				'SELECT id FROM freiepunkteliste WHERE lower(name) = ?;',
 				(punktName.lower(),)
 			).fetchone()
 	return None if query is None else query[0]
