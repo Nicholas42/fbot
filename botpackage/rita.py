@@ -103,14 +103,15 @@ def learntosing(link, db_connection):
 				).fetchone()
 		if query is not None:
 			return helper.botMessage("Das kenn ich schon.", _botname)
-		# ~ vid_id = link.partition("?v=")[2]
-		# ~ vid_name = youtube.title(vid_id)
-		# ~ if not vid_name:
-			# ~ return helper.botMessage('Das Video gibts doch gar nicht..'%vid_name, _botname)
-		# ~ print(vid_name)
+		vid_id = link.partition("?v=")[2]
+		vid_metadata = youtube.title(vid_id)
+		if vid_metadata['status'] != 0:
+			return helper.botMessage(vid_metadata['error'], _botname)
+		vid_title = vid_metadata['title']
+		(vid_title[:50]+'…') if len(vid_title)>50 else vid_title
 		cursor.execute("INSERT INTO songs (link) VALUES (?);", (link,))
 		db_connection.commit()
-		return helper.botMessage('Ich kann jetzt was Neues singen: %s'%link, _botname)
+		return helper.botMessage('Ich kann jetzt was Neues singen: %s'%vid_title, _botname)
 
 
 def songCount(cursor):
