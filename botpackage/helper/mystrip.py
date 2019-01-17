@@ -10,3 +10,7 @@ def stripFromBegin(s : str, a : list):
 
 def norm(name):
     return name.lower().strip(_space_chars)
+
+
+def truncate(s, length):
+	return (s[:length-1]+'…') if len(s)>50 else s
