@@ -86,31 +86,30 @@ def processMessage(args, rawMessage, db_connection):
 linkRegex=re.compile('^(https:\/\/((www|m)\.)?youtube\.(com|de)\/watch\?v=([a-zA-Z0-9\-_]{,20}))(&t=\d+|)?$')
 
 def learntosing(link, db_connection):
-		cursor = db_connection.cursor()
-		# ~ if e['user_id'] in self.singbans:
-			# ~ return helper.botMessage(message = "Ich hab Niveau!", _botname)
-		link = link.replace('http://','https://').strip(_space_chars)
-		link = link.replace('m.youtube.com','youtube.com')
-		link = link.replace('youtu.be/','www.youtube.com/watch?v=')
-		link = link.replace('&feature=youtu.be', '')
-		if link.startswith('youtube') or link.startswith('www'):
-			link = 'https://www.' + link
-		if not linkRegex.match(link):
-			return helper.botMessage("Die url passt nicht ganz.", _botname)
-
-		query = cursor.execute(
-					"SELECT id FROM songs WHERE link LIKE ?;", (re.sub(linkRegex, '\\1', link)+'%', ),
-				).fetchone()
-		if query is not None:
-			return helper.botMessage("Das kenn ich schon.", _botname)
-		vid_id = link.partition("?v=")[2]
-		vid_metadata = youtube.title(vid_id)
-		if vid_metadata['status'] != 0:
-			return helper.botMessage(vid_metadata['error'], _botname)
-		vid_title = truncate(vid_metadata['title'], 50)
-		cursor.execute("INSERT INTO songs (link) VALUES (?);", (link,))
-		db_connection.commit()
-		return helper.botMessage('Ich kann jetzt was Neues singen: %s'%vid_title, _botname)
+	cursor = db_connection.cursor()
+	# ~ if e['user_id'] in self.singbans:
+		# ~ return helper.botMessage(message = "Ich hab Niveau!", _botname)
+	link = link.replace('http://','https://').strip(_space_chars)
+	link = link.replace('m.youtube.com','youtube.com')
+	link = link.replace('youtu.be/','www.youtube.com/watch?v=')
+	link = link.replace('&feature=youtu.be', '')
+	if link.startswith('youtube') or link.startswith('www'):
+		link = 'https://www.' + link
+	if not linkRegex.match(link):
+		return helper.botMessage("Die url passt nicht ganz.", _botname)
+	query = cursor.execute(
+				"SELECT id FROM songs WHERE link LIKE ?;", (re.sub(linkRegex, '\\1', link)+'%', ),
+			).fetchone()
+	if query is not None:
+		return helper.botMessage("Das kenn ich schon.", _botname)
+	vid_id = link.partition("?v=")[2]
+	vid_metadata = youtube.title(vid_id)
+	if vid_metadata['status'] != 0:
+		return helper.botMessage(vid_metadata['error'], _botname)
+	vid_title = truncate(vid_metadata['title'], 50)
+	cursor.execute("INSERT INTO songs (link) VALUES (?);", (link,))
+	db_connection.commit()
+	return helper.botMessage('Ich kann jetzt was Neues singen: %s'%vid_title, _botname)
 
 
 def songCount(cursor):
