@@ -78,6 +78,7 @@ def processMessage(args, rawMessage, db_connection):
 					'AND sender == ? '
 					';', (args[1], rawMessage['name'].strip(_space_chars))
 		).fetchone()
+		pingMessage = stripFromBegin(rawMessage['message'], args[0:2]).rstrip(_space_chars)
 		if pingCount[0] == 0 or not settings.overwrite_pings:
 			cursor.execute(
 						'INSERT OR REPLACE '
@@ -86,7 +87,7 @@ def processMessage(args, rawMessage, db_connection):
 						'VALUES (?, ?, ?, ?)'
 						';', (
 							args[1],
-							stripFromBegin(rawMessage['message'], args[0:2]),
+							pingMessage,
 							rawMessage['name'].strip(_space_chars),
 							rawMessage['id'],
 						)
@@ -98,7 +99,7 @@ def processMessage(args, rawMessage, db_connection):
 						'WHERE recipient = ? '
 						'AND sender = ?'
 						';', (
-							stripFromBegin(rawMessage['message'], args[0:2]),
+							pingMessage,
 							rawMessage['id'],
 							args[1],
 							rawMessage['name'].strip(_space_chars),
