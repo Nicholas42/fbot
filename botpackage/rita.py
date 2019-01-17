@@ -83,20 +83,18 @@ def processMessage(args, rawMessage, db_connection):
 
 
 
-linkRegex=re.compile('^(https:\/\/www.youtube.com\/watch\?v=[a-zA-Z0-9\-_]{,20})(&t=\d+)?$')
+linkRegex=re.compile('^(https:\/\/((www|m)\.)?youtube\.(com|de)\/watch\?v=[a-zA-Z0-9\-_]{,20})(&t=\d+|)?$')
 
 def learntosing(link, db_connection):
 		cursor = db_connection.cursor()
 		# ~ if e['user_id'] in self.singbans:
 			# ~ return helper.botMessage(message = "Ich hab Niveau!", _botname)
 		link = link.replace('http://','https://').strip(_space_chars)
+		link = link.replace('m.youtube.com','youtube.com')
 		link = link.replace('youtu.be/','www.youtube.com/watch?v=')
-		if link.startswith('youtube'):
-			link = 'https://www.' + link
-		elif link.startswith('www.'):
-			link = 'https://' + link
-		link = link.replace('youtube.de/','youtube.com/')
 		link = link.replace('&feature=youtu.be', '')
+		if link.startswith('youtube') or link.startswith('www'):
+			link = 'https://www.' + link
 		if not linkRegex.match(link):
 			return helper.botMessage("Die url passt nicht ganz.", _botname)
 
