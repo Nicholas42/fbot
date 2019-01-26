@@ -64,7 +64,7 @@ def processMessage(args, rawMessage, db_connection):
 			if rawMessage['username'] in botMasters:
 				return removeasong(parsedArgs['song'], db_connection)
 			else:
-				return helper.botMessage('ich habehabe einein Messer', _botname)
+				return helper.botMessage('DU bist nicht mein botmaster. ich bin gescheitert', _botname)
 
 		return helper.botMessage(singasong(db_connection.cursor()), _botname)
 
