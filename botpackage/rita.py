@@ -44,6 +44,7 @@ def processMessage(args, rawMessage, db_connection):
 		parser = argparse.ArgumentParser(prog='!rita sing')
 		parser.add_argument('song', nargs='?')
 		parser.add_argument('-l', '--learn', action='store_true', dest='learn')
+		parser.add_argument('-a', '--add', action='store_true', dest='learn')
 		parser.add_argument('-r', '--remove', action='store_true', dest='remove')
 		parser.add_argument('-h', '--help', action='store_true')
 		parser.add_argument('-v', '--version', action='store_true') # needed
