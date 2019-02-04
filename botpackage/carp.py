@@ -6,8 +6,8 @@ import botpackage.fantasynames.fishNames as fishNames
 import botpackage.fantasynames.lovecraftianNames as lovecraftianNames
 
 
-_interact_chance = 1/700
-_cthulhu_chance = 1./30
+_interact_chance = 1/7000
+_cthulhu_chance = 1./300
 
 _reactions = ["*bites {victim} for {dmg} dmg*", "blub. blub. blub.", "blub! *plätscher*", "*blub! *glitzer*", "*lässt sich von {victim} kraulen*"]
 
