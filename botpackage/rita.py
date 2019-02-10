@@ -47,6 +47,7 @@ def processMessage(args, rawMessage, db_connection):
 		parser.add_argument('-a', '--add', action='store_true', dest='learn')
 		parser.add_argument('-r', '--remove', action='store_true', dest='remove')
 		parser.add_argument('-h', '--help', action='store_true')
+		parser.add_argument('-c', '--count', action='store_true')
 		parser.add_argument('-v', '--version', action='store_true') # needed
 		try:
 			parsedArgs = vars(parser.parse_known_args(args[2:])[0])
@@ -66,6 +67,8 @@ def processMessage(args, rawMessage, db_connection):
 				return removeasong(parsedArgs['song'], db_connection)
 			else:
 				return helper.botMessage('DU bist nicht mein botmaster. ich bin gescheitert', _botname)
+		elif parsedArgs['count']:
+			return helper.botMessage('Ich kann schon %s Lieder singen :) *stolz*'%songCount(db_connection.cursor()), _botname)
 
 		return helper.botMessage(singasong(db_connection.cursor()), _botname)
 
