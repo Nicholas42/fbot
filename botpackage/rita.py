@@ -16,7 +16,10 @@ _help = _usageTemplate + '[decide|ping|sing|ud] [args]'
 _help_ud = _usageTemplate + 'ud <expr>'
 _slap_trigger = 'slap'
 _featurerequest_trigger = 'featurerequest'
+_width = 120
 
+def _formatter_class(prog):
+	return argparse.argparse.HelpFormatter(prog=prog, width=_width)
 
 def processMessage(args, rawMessage, db_connection):
 	if len(args) < 2:
@@ -41,30 +44,27 @@ def processMessage(args, rawMessage, db_connection):
 		return helper.botMessage(antwort, _botname)
 
 	elif args[1].lower().startswith('sing'):
-		parser = argparse.ArgumentParser(prog='!rita sing')
-		parser.add_argument('song', nargs='?')
-		parser.add_argument('-l', '--learn', action='store_true', dest='learn')
-		parser.add_argument('-a', '--add', action='store_true', dest='learn')
-		parser.add_argument('-r', '--remove', action='store_true', dest='remove')
-		parser.add_argument('-h', '--help', action='store_true')
-		parser.add_argument('-c', '--count', action='store_true')
-		parser.add_argument('-v', '--version', action='store_true') # needed
+		parser = argparse.ArgumentParser(prog='!rita sing', formatter_class=_formatter_class)
+		helper.argparseSynonyms(parser, ['-l', '--learn', '-a', '--add'], dict(nargs=1, dest='learn', metavar='song'))
+		helper.argparseSynonyms(parser, ['-r', '--remove'], dict(nargs=1, dest='remove', metavar='song'))
+		helper.argparseSynonyms(parser, ['-h', '--help'], dict(dest='help', action='store_true'))
+		helper.argparseSynonyms(parser, ['-v', '--version'], dict(dest='version', action='store_true'))
+		helper.argparseSynonyms(parser, ['-c', '--count'], dict(dest='count', action='store_true'))
 		try:
 			parsedArgs = vars(parser.parse_known_args(args[2:])[0])
 		except argparse.ArgumentError:
 			return helper.botMessage(parser.print_usage(), _botname)
 
-		if (( parsedArgs['learn'] or parsedArgs['remove'] ) and parsedArgs['song'] == None) or \
-					parsedArgs['help']:
+		if parsedArgs['help']:
 			return helper.botMessage(parser.format_usage().rstrip('\n'), _botname)
 		elif parsedArgs['version']:
 			return helper.botMessage('secret unlocked \o/ the first one calling w/ID gets some chocolate', _botmessage)
 
 		if parsedArgs['learn']:
-			return learntosing(parsedArgs['song'], db_connection)
+			return learntosing(*parsedArgs['learn'], db_connection)
 		elif parsedArgs['remove']:
 			if rawMessage['username'] in botMasters:
-				return removeasong(parsedArgs['song'], db_connection)
+				return removeasong(*parsedArgs['remove'], db_connection)
 			else:
 				return helper.botMessage('DU bist nicht mein botmaster. ich bin gescheitert', _botname)
 		elif parsedArgs['count']:

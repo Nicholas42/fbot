@@ -20,3 +20,10 @@ def usernameFromUserid(cursor, userid):
 				'AND deletable == 1'
 				';', (userid, )).fetchone()
 	return query[0]
+
+def argparseSynonyms(parser, flags, keyargs=dict()):
+	tmp = parser.add_mutually_exclusive_group()
+	for i in flags:
+		tmp.add_argument(i, **keyargs)
+	return tmp
+
